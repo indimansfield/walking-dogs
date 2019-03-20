@@ -5,7 +5,7 @@ export interface State {
   speed: number
 }
 
-const socket = new Socket()
+// const socket = new Socket()
 
 
 

@@ -1,3 +1,5 @@
+import { TreadmillInterface } from "./treadmill";
+
 interface ISession {
   setRounds: (amount: number) => number
   roundsRemaining: () => number
@@ -5,13 +7,17 @@ interface ISession {
   setRoundDuration: (duration: number) => number
   start: () => Promise<boolean>
   stop: () => boolean
+  setSpeed: (speed: number) => number
+  getSpeed: () => number
+  setWaterLevel: (level: number) => number
+  getWaterLevel: () => number 
 }
 
-interface Timer {
+export interface ITimer {
   start: (duration: number) => Promise<boolean>
 }
 
-class timer implements Timer {
+class Timer implements ITimer {
   start(duration: number) {
     return new Promise<boolean>(resolve => {
       setTimeout(() => {
@@ -25,16 +31,34 @@ export class Session implements ISession {
   private rounds = 0
   private remainingRounds = 0
   private durationInMillis = 0
+  private speed = 0
+  private waterLevel = 0
   private running = false
-  private timer: Timer
+  private timer: ITimer
 
-  private treadmill: TreadMillInterface
   private machine: Machine
 
-  constructor(treadmill: TreadMillInterface, machine: Machine, timer: Timer) {
-    this.treadmill = treadmill
+  constructor(machine: Machine, timer: ITimer) {
     this.machine = machine
     this.timer = timer
+  }
+
+  setSpeed(speed: number) {
+    this.speed = 0
+    return speed
+  }
+
+  getSpeed() {
+    return this.speed
+  }
+  
+  setWaterLevel(level: number) {
+    this.waterLevel = level
+    return level
+  };
+  
+  getWaterLevel() {
+    return this.waterLevel
   }
   
   setRounds = (amount: number) => {
@@ -57,10 +81,14 @@ export class Session implements ISession {
   }
 
   async start() {
-    this.machine.setSpeed(this.treadmill.getSpeed())
+    if (this.remainingRounds == 0) {
+      return false
+    }
+    this.machine.setSpeed(this.getSpeed())
     await this.timer.start(this.durationInMillis)
     this.machine.setSpeed(0)
     this.stop
+    this.remainingRounds --
     return this.running
   }
 

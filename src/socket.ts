@@ -1,5 +1,5 @@
 import WebSocket from 'ws'
-import { State } from './index'
+import { Session } from './lib/session'
 
 interface Message {
   action: String,
@@ -10,10 +10,9 @@ export class Socket {
   private wss = new WebSocket.Server({ port: 3000 });
   private ws = new WebSocket('localhost:8080')
 
-  state: State
-  
-  constructor(state: State) {
-    this.state = state
+  private session: Session
+  constructor(session: Session) {
+    this.session = session
 
   }
 
@@ -31,11 +30,7 @@ export class Socket {
     const parsed: Message = JSON.parse(message)
     switch (parsed.action) {
       case('INCREMENT_SPEED'):
-        this.state.speed ++
-        return {
-          action: 'INCREMENT_SPEED',
-          value: this.state.speed 
-        }
+        this.session.setSpeed(parsed.value)
     }
     return {
       action: 'NONE',
