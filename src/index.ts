@@ -1,11 +1,12 @@
 
-import { Socket } from "./socket";
+import { Socket } from "./socket"
+import { Session, Timer, TestMachine } from "./lib"
+const machine = new TestMachine()
+const timer = new Timer()
+const session = new Session(machine, timer)
 
-export interface State {
-  speed: number
-}
+const socket = new Socket(session)
 
-// const socket = new Socket()
-
+socket.listen()
 
 

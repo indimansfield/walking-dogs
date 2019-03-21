@@ -15,6 +15,7 @@
   "scripts": {
     "start": "npm run build:live",
     "build": "tsc -p .",
+    "test": "./node_modules/jest/bin/jest.js",
     "build:live": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
   },
   "dependencies": {

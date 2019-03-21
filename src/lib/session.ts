@@ -1,4 +1,5 @@
 import { TreadmillInterface } from "./treadmill";
+import { IMachine } from './machine'
 
 interface ISession {
   setRounds: (amount: number) => number
@@ -17,14 +18,14 @@ export interface ITimer {
   start: (duration: number) => Promise<boolean>
 }
 
-class Timer implements ITimer {
+export class Timer implements ITimer {
   start(duration: number) {
     return new Promise<boolean>(resolve => {
       setTimeout(() => {
         resolve(true)
       }, duration)
     })
-    }
+  }
 }
 
 export class Session implements ISession {
@@ -36,9 +37,9 @@ export class Session implements ISession {
   private running = false
   private timer: ITimer
 
-  private machine: Machine
+  private machine: IMachine
 
-  constructor(machine: Machine, timer: ITimer) {
+  constructor(machine: IMachine, timer: ITimer) {
     this.machine = machine
     this.timer = timer
   }

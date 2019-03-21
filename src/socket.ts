@@ -8,7 +8,6 @@ interface Message {
 
 export class Socket {
   private wss = new WebSocket.Server({ port: 3000 });
-  private ws = new WebSocket('localhost:8080')
 
   private session: Session
   constructor(session: Session) {
@@ -17,9 +16,9 @@ export class Socket {
   }
 
   public listen = () => {
-    this.wss.on('connection',  () => {
-      this.ws.on('message', (message: string) => {
-        this.ws.send(
+    this.wss.on('connection',  (ws) => {
+      ws.on('message', (message: string) => {
+        ws.send(
           JSON.stringify(this.handle(message))
         )
       });
@@ -28,9 +27,16 @@ export class Socket {
 
   private handle = (message: string): Message => {
     const parsed: Message = JSON.parse(message)
+    console.log("Received:", parsed)
+    console.log("Action:", parsed.action)
+
     switch (parsed.action) {
       case('INCREMENT_SPEED'):
         this.session.setSpeed(parsed.value)
+        return {
+          action: 'INCREMENT_SPEED',
+          value: parsed.value
+        }
     }
     return {
       action: 'NONE',
