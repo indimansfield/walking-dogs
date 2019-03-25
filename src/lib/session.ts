@@ -8,7 +8,8 @@ interface ISession {
   setRoundDuration: (duration: number) => number
   start: () => Promise<boolean>
   stop: () => boolean
-  setSpeed: (speed: number) => number
+  incrementSpeed: () => number
+  decrementSpeed: () => number
   getSpeed: () => number
   setWaterLevel: (level: number) => number
   getWaterLevel: () => number 
@@ -44,9 +45,14 @@ export class Session implements ISession {
     this.timer = timer
   }
 
-  setSpeed(speed: number) {
-    this.speed = 0
-    return speed
+  incrementSpeed() {
+    this.speed ++
+    return this.speed
+  }
+
+  decrementSpeed() {
+    this.speed --
+    return this.speed
   }
 
   getSpeed() {

@@ -2,7 +2,7 @@ import WebSocket from 'ws'
 import { Session } from './lib/session'
 
 interface Message {
-  action: String,
+  type: string,
   value: any
 }
 
@@ -17,29 +17,36 @@ export class Socket {
 
   public listen = () => {
     this.wss.on('connection',  (ws) => {
-      ws.on('message', (message: string) => {
+      console.log('connected')
+      ws.on('message', (message: any) => {
+
         ws.send(
-          JSON.stringify(this.handle(message))
+          JSON.stringify(this.handle(JSON.parse(message)))
         )
       });
     });
   }
 
-  private handle = (message: string): Message => {
-    const parsed: Message = JSON.parse(message)
-    console.log("Received:", parsed)
-    console.log("Action:", parsed.action)
+  private handle = (message: { type: string, value: string}): Message => {
+    console.log("Received:", message.value)
+    console.log("Type:", message.type)
 
-    switch (parsed.action) {
+    switch (message.type) {
       case('INCREMENT_SPEED'):
-        this.session.setSpeed(parsed.value)
+        const speed = this.session.incrementSpeed()
         return {
-          action: 'INCREMENT_SPEED',
-          value: parsed.value
+          type: 'SET_SPEED',
+          value: speed
+        }
+      case('DECREMENT_SPEED'):
+        const value = this.session.decrementSpeed()
+        return {
+          type: 'SET_SPEED',
+          value
         }
     }
     return {
-      action: 'NONE',
+      type: 'NONE',
       value: 0
     }
   }
