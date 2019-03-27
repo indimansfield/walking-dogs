@@ -1,29 +1,63 @@
 <template>
   <div id="app">
+    <div class="md-layout">
+      <div class="md-layout-item">
+        <setter-card 
+          title="Speed"
+          :value="speed"
+          v-on:increment="incrementSpeed"
+          v-on:decrement="decrementSpeed"/>
+      </div>
+      <div class="md-layout-item">
+        <setter-card 
+          title="Water Level"
+          :value="speed"
+          v-on:increment="incrementSpeed"
+          v-on:decrement="decrementSpeed"/>
+      </div>
+      <div class="md-layout-item">
+        <setter-card 
+          title="Speed"
+          :value="speed"
+          v-on:increment="incrementSpeed"
+          v-on:decrement="decrementSpeed"/>
+      </div>
+    </div>
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+
   </div>
 </template>
-
 <script lang="ts">
 import Vue from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import { mapActions } from 'vuex';
+
+import SetterCard from './components/SetterCard.vue';
 
 export default Vue.extend({
   name: 'app',
   components: {
-    HelloWorld,
+    SetterCard,
   },
+  computed: {
+    speed (): number {
+      console.log(this.$store.state.session.speed)
+      return this.$store.state.session.speed.toString();
+    }
+  },
+  methods: {
+    ...mapActions([
+      'incrementSpeed',
+      'decrementSpeed'
+    ])
+  }
 });
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+  width: 1200px;
+  text-align: left;
+   margin: 0px auto;
 }
 </style>
