@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 interface Message {
   type: string;
-  value: any;
+  value?: any;
 }
 
 export default new Vuex.Store({
@@ -54,11 +54,21 @@ export default new Vuex.Store({
       sendAction({
         type: 'DECREMENT_SPEED',
       });
+    },
+    setSpeed: ({ commit }, { speed }) => {
+      console.log('store', speed);
+      if (speed === null || speed === undefined) {
+        return;
+      }
+      sendAction({
+        type: 'SET_SPEED',
+        value: speed
+      });
     }
   }
 });
 
-function sendAction(message: { type: string, value?: string}) {
+function sendAction(message: Message) {
   Vue.prototype.$socket.send(JSON.stringify(message));
 }
 

@@ -44,6 +44,12 @@ export class Socket {
           type: 'SET_SPEED',
           value
         }
+      case('SET_SPEED'):
+        this.session.setSpeed(Number(message.value))
+        return {
+          type: 'SET_SPEED',
+          value: this.session.getSpeed()
+        }
     }
     return {
       type: 'NONE',

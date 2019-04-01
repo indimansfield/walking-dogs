@@ -4,9 +4,11 @@
       {{ title }}
     </md-card-header>
     <md-card-content class="wrapper">
-      <div class="value">
-        {{ value }}
-      </div>
+      <md-field class="value">
+        <label>{{ title }}</label>
+        <md-input v-model="textValue"></md-input>
+        <span class="md-suffix"> {{ units }} </span>
+      </md-field>
       <div class="button_increment">
         <md-button class="md-raised md-icon-button md-raised" v-on:click="increment">
           <md-icon class="md-size-4x">add</md-icon>
@@ -31,14 +33,27 @@ export default Vue.extend({
     units: String,
     value: String
   },
+  computed: {
+    textValue: {
+      get(): string {
+        return this.value
+      },
+      set(newValue: number) {
+        console.log('new', newValue)
+        this.change(newValue)
+      }
+    }
+  },
   methods: {
     increment() {
       this.$emit('increment')
     },
     decrement() {
       this.$emit('decrement')
+    },
+    change(value: number) {
+      this.$emit('change', value)
     }
-
   }
 });
 </script>

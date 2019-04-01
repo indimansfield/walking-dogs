@@ -10,6 +10,7 @@ interface ISession {
   stop: () => boolean
   incrementSpeed: () => number
   decrementSpeed: () => number
+  setSpeed: (speed: number) => number
   getSpeed: () => number
   setWaterLevel: (level: number) => number
   getWaterLevel: () => number 
@@ -51,8 +52,16 @@ export class Session implements ISession {
   }
 
   decrementSpeed() {
+    if (this.speed == 0) {
+      return 0
+    }
     this.speed --
     return this.speed
+  }
+
+  setSpeed(speed: number) {
+    this.speed = speed
+    return speed
   }
 
   getSpeed() {

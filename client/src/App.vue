@@ -5,8 +5,10 @@
         <setter-card 
           title="Speed"
           :value="speed"
+          units="m/s"
           v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"/>
+          v-on:decrement="decrementSpeed"
+          v-on:change="setSpeed"/>
       </div>
       <div class="md-layout-item">
         <setter-card 
@@ -47,8 +49,12 @@ export default Vue.extend({
   methods: {
     ...mapActions([
       'incrementSpeed',
-      'decrementSpeed'
-    ])
+      'decrementSpeed',
+    ]),
+    setSpeed(value: number) {
+      console.log('speed', value)
+      this.$store.dispatch('setSpeed', { speed: value })
+    }
   }
 });
 </script>
