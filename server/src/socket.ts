@@ -33,6 +33,7 @@ export class Socket {
 
     switch (message.type) {
       case('INCREMENT_SPEED'):
+        console.log('brus look out')
         const speed = this.session.incrementSpeed()
         return {
           type: 'SET_SPEED',
@@ -49,6 +50,24 @@ export class Socket {
         return {
           type: 'SET_SPEED',
           value: this.session.getSpeed()
+        }
+      case('INCREMENT_WATER_LEVEL'):
+        this.session.incrementWaterLevel()
+        return {
+          type: 'SET_WATER_LEVEL',
+          value: this.session.getWaterLevel()
+        }
+      case('DECREMENT_WATER_LEVEL'):
+        this.session.decrementWaterLevel()
+        return {
+          type: 'SET_WATER_LEVEL',
+          value: this.session.getWaterLevel()
+        }
+      case('SET_WATER_LEVEL'):
+        this.session.setWaterLevel(Number(message.value))
+        return {
+          type: 'SET_WATER_LEVEL',
+          value: this.session.getWaterLevel()
         }
     }
     return {

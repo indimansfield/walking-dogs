@@ -13,7 +13,10 @@ interface ISession {
   setSpeed: (speed: number) => number
   getSpeed: () => number
   setWaterLevel: (level: number) => number
-  getWaterLevel: () => number 
+  getWaterLevel: () => number,
+  incrementWaterLevel: () => number,
+  decrementWaterLevel: () => number,
+  setDirection: (direction: 'forward' | 'reverse') => string
 }
 
 export interface ITimer {
@@ -67,6 +70,19 @@ export class Session implements ISession {
   getSpeed() {
     return this.speed
   }
+
+  incrementWaterLevel() {
+    this.waterLevel ++
+    return this.waterLevel
+  }
+
+  decrementWaterLevel() {
+    if (this.waterLevel == 0) {
+      return 0
+    }
+    this.waterLevel --
+    return this.waterLevel
+  }
   
   setWaterLevel(level: number) {
     this.waterLevel = level
@@ -112,5 +128,9 @@ export class Session implements ISession {
     return this.running
   }
 
+  setDirection(direction: 'forward' | 'reverse') {
+    // TODO implement
+    return ''
+  }
 
 }

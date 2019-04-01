@@ -17,6 +17,7 @@ export default new Vuex.Store({
     },
     session: {
       speed: 0,
+      waterLevel: 0
     },
   },
   mutations: {
@@ -56,13 +57,33 @@ export default new Vuex.Store({
       });
     },
     setSpeed: ({ commit }, { speed }) => {
-      console.log('store', speed);
       if (speed === null || speed === undefined) {
         return;
       }
       sendAction({
         type: 'SET_SPEED',
         value: speed
+      });
+    },
+    incrementWaterLevel: () => {
+      console.log('Called increment');
+      sendAction({
+        type: 'INCREMENT_WATER_LEVEL',
+      });
+    },
+    decrementWaterLevel: () => {
+      console.log('Called decrement');
+      sendAction({
+        type: 'DECREMENT_WATER_LEVEL',
+      });
+    },
+    setWaterLevel: ({ commit }, { level }) => {
+      if (level === null || level === undefined) {
+        return;
+      }
+      sendAction({
+        type: 'SET_WATER_LEVEL',
+        value: level
       });
     }
   }
@@ -80,6 +101,10 @@ function handle(state: any, message: Message) {
   switch (type) {
     case 'SET_SPEED':
       state.session.speed = value;
+      break;
+    case 'SET_WATER_LEVEL':
+      state.session.waterLevel = value;
+      break;
   }
   console.log(state)
 }

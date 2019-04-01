@@ -5,7 +5,7 @@
         <setter-card 
           title="Speed"
           :value="speed"
-          units="m/s"
+          units="m/min"
           v-on:increment="incrementSpeed"
           v-on:decrement="decrementSpeed"
           v-on:change="setSpeed"/>
@@ -13,9 +13,11 @@
       <div class="md-layout-item">
         <setter-card 
           title="Water Level"
-          :value="speed"
-          v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"/>
+          :value="waterLevel"
+          units="mm"
+          v-on:increment="incrementWaterLevel"
+          v-on:decrement="decrementWaterLevel"
+          v-on:change="setWaterLevel"/>
       </div>
       <div class="md-layout-item">
         <setter-card 
@@ -42,18 +44,26 @@ export default Vue.extend({
   },
   computed: {
     speed (): number {
-      console.log(this.$store.state.session.speed)
       return this.$store.state.session.speed.toString();
+    },
+    waterLevel(): number {
+      return this.$store.state.session.waterLevel.toString();
     }
   },
   methods: {
     ...mapActions([
       'incrementSpeed',
       'decrementSpeed',
+      'incrementWaterLevel',
+      'decrementWaterLevel'
     ]),
     setSpeed(value: number) {
-      console.log('speed', value)
+      console.log('calling speed')
       this.$store.dispatch('setSpeed', { speed: value })
+    },
+    setWaterLevel(value: number) {
+      console.log('calling ws')
+      this.$store.dispatch('setWaterLevel', { level: value })
     }
   }
 });
