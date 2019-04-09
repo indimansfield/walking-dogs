@@ -25,42 +25,35 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
 
-export default Vue.extend({
-  name: 'SetterCard',
-  props: {
-    title: String,
-    units: String,
-    value: String
-  },
-  computed: {
-    textValue: {
-      get(): string {
-        return this.value
-      },
-      set(newValue: number) {
-        console.log('new', newValue)
-        this.change(newValue)
-      }
-    }
-  },
-  methods: {
-    increment() {
-      this.$emit('increment')
-    },
-    decrement() {
-      this.$emit('decrement')
-    },
-    change(value: number) {
-      this.$emit('change', value)
-    }
+@Component({})
+export default class SetterCard extends Vue {
+  @Prop() readonly title: string;
+  @Prop() readonly units: string;
+  @Prop() readonly value: string;
+
+  get textValue(): string {
+    return this.value
   }
-});
+
+  set textValue(val: string) {
+    this.$emit('change', val)
+  }
+
+  increment() {
+    this.$emit('increment')
+  }
+
+  decrement() {
+    this.$emit('decrement')
+  }
+}
 </script>
 
 <style scoped>
   .md-card {
-    /* width: 320px; */
     margin: 4px;
     display: inline-block;
     vertical-align: top;

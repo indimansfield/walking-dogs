@@ -27,8 +27,7 @@
           v-on:decrement="decrementSpeed"/>
       </div>
     </div>
-    <img alt="Vue logo" src="./assets/logo.png">
-
+    <direction-setter></direction-setter>
   </div>
 </template>
 <script lang="ts">
@@ -36,11 +35,13 @@ import Vue from 'vue';
 import { mapActions } from 'vuex';
 
 import SetterCard from './components/SetterCard.vue';
+import DirectionSetter from './components/DirectionSetter.vue';
 
 export default Vue.extend({
   name: 'app',
   components: {
     SetterCard,
+    DirectionSetter
   },
   computed: {
     speed (): number {

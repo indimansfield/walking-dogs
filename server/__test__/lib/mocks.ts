@@ -1,6 +1,7 @@
 import { ITimer } from "../../src/lib/session";
+import { IMachine } from "../../src/lib/machine"
 
-export class MockMachine implements Machine {
+export class MockMachine implements IMachine {
   fillOn() {
     return true
   }

@@ -69,6 +69,37 @@ export class Socket {
           type: 'SET_WATER_LEVEL',
           value: this.session.getWaterLevel()
         }
+      case('SET_DURATION'):
+        this.session.setRoundDuration(Number(message.value))
+        return {
+          type: 'SET_DURATION',
+          value: this.session.getRoundDuration()
+        }
+      case('INCREMENT_DURATION'):
+        this.session.incrementRoundDuration()
+        return {
+          type: 'SET_DURATION',
+          value: this.session.getRoundDuration()
+        }
+      case('DECREMENT_DURATION'):
+        this.session.decrementRoundDuration()
+        return {
+          type: 'SET_DURATION',
+          value: this.session.getRoundDuration()
+        }
+      case('SET_DIRECTION'):
+        this.session.setDirection(message.value as ('forward' | 'reverse'))
+        return {
+          type: 'SET_DIRECTION',
+          value: this.session.getDirection()
+        }
+      case('START'):
+        this.session.start()
+        return {
+          type: 'START',
+          value: ''
+        }
+
     }
     return {
       type: 'NONE',

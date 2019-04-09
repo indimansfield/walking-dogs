@@ -9,7 +9,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "experimentalDecorators": true,
     "baseUrl": ".",
+    "strictPropertyInitialization": false,
     "types": [
       "webpack-env",
       "mocha",

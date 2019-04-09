@@ -2,21 +2,25 @@ import { TreadmillInterface } from "./treadmill";
 import { IMachine } from './machine'
 
 interface ISession {
-  setRounds: (amount: number) => number
-  roundsRemaining: () => number
-  totalRounds: () => number
-  setRoundDuration: (duration: number) => number
-  start: () => Promise<boolean>
-  stop: () => boolean
-  incrementSpeed: () => number
-  decrementSpeed: () => number
-  setSpeed: (speed: number) => number
-  getSpeed: () => number
-  setWaterLevel: (level: number) => number
-  getWaterLevel: () => number,
-  incrementWaterLevel: () => number,
-  decrementWaterLevel: () => number,
-  setDirection: (direction: 'forward' | 'reverse') => string
+  setRounds: (amount: number) => number;
+  roundsRemaining: () => number;
+  totalRounds: () => number;
+  incrementRoundDuration: () => number;
+  decrementRoundDuration: () => number;
+  setRoundDuration: (duration: number) => number;
+  getRoundDuration: () => number;
+  start: () => Promise<boolean>;
+  stop: () => boolean;
+  incrementSpeed: () => number;
+  decrementSpeed: () => number;
+  setSpeed: (speed: number) => number;
+  getSpeed: () => number;
+  setWaterLevel: (level: number) => number;
+  getWaterLevel: () => number;
+  incrementWaterLevel: () => number;
+  decrementWaterLevel: () => number;
+  setDirection: (direction: 'forward' | 'reverse') => string;
+  getDirection: () => string;
 }
 
 export interface ITimer {
@@ -41,6 +45,9 @@ export class Session implements ISession {
   private waterLevel = 0
   private running = false
   private timer: ITimer
+  private direction = 'forward'
+
+  private readonly TIMER_INCREMENTS = 10000
 
   private machine: IMachine
 
@@ -107,7 +114,28 @@ export class Session implements ISession {
     return this.rounds
   }
 
+  incrementRoundDuration() {
+    this.durationInMillis += this.TIMER_INCREMENTS
+    return 0
+  }
+
+  decrementRoundDuration() {
+    if (this.durationInMillis - this.TIMER_INCREMENTS < 0) {
+      this.durationInMillis = 0
+      return this.durationInMillis
+    }
+    this.durationInMillis -= this.TIMER_INCREMENTS
+    return this.durationInMillis
+  }
+
+  getRoundDuration(): number {
+    return this.durationInMillis
+  }
+
   setRoundDuration(duration: number) {
+    if ( duration < 0 ) {
+      return this.durationInMillis
+    }
     this.durationInMillis = duration
     return this.durationInMillis
   }
@@ -125,12 +153,17 @@ export class Session implements ISession {
   }
 
   stop() {
+    this.machine.setSpeed(0)
+    this.stop
     return this.running
   }
 
   setDirection(direction: 'forward' | 'reverse') {
-    // TODO implement
-    return ''
+    this.direction = direction
+    return this.direction
   }
 
+  getDirection() {
+    return this.direction
+  }
 }

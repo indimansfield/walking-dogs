@@ -85,7 +85,24 @@ export default new Vuex.Store({
         type: 'SET_WATER_LEVEL',
         value: level
       });
+    },
+    setRoundDuration: ({ commit }, { duration }) => {
+      sendAction({
+        type: 'SET_DURATION',
+        value: duration
+      })
+    },
+    incrementDuration: () => {
+      sendAction({
+        type: 'INCREMENT_DURATION'
+      })
+    },
+    decrementDuration: () => {
+      sendAction({
+        type: 'DECREMENT_DURATION'
+      })
     }
+
   }
 });
 
