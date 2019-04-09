@@ -9,14 +9,14 @@
         <md-input v-model="textValue"></md-input>
         <span class="md-suffix"> {{ units }} </span>
       </md-field>
-      <div class="button_increment">
-        <md-button class="md-raised md-icon-button md-raised" v-on:click="increment">
-          <md-icon class="md-size-4x">add</md-icon>
-        </md-button>
-      </div>
       <div class="button_decrement">
         <md-button class="md-raised md-icon-button md-accent" v-on:click="decrement">
-          <md-icon class="md-size-4x">remove</md-icon>
+          <md-icon class="md-size-5x">remove</md-icon>
+        </md-button>
+      </div>
+      <div class="button_increment">
+        <md-button class="md-raised md-icon-button md-raised" v-on:click="increment">
+          <md-icon class="md-size-5x">add</md-icon>
         </md-button>
       </div>
     </md-card-content>
@@ -54,9 +54,8 @@ export default class SetterCard extends Vue {
 
 <style scoped>
   .md-card {
-    margin: 4px;
-    display: inline-block;
     vertical-align: top;
+    width: 100%;
   }
   .wrapper {
     display: grid;
@@ -68,15 +67,15 @@ export default class SetterCard extends Vue {
     grid-column:  1 / 3;
   }
   .button_increment {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .button_decrement {
     grid-column: 2;
     grid-row: 2;
   }
+  .button_decrement {
+    grid-column: 1;
+    grid-row: 2;
+  }
   .md-icon-button {
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 150px;
   }
 </style>

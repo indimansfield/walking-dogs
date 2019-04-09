@@ -3,18 +3,20 @@
     <md-card-header class="md-title">
       Treadmill Direction
     </md-card-header>
-    <md-button 
-      class="md-raised md-icon-button md-raised"
-      v-bind:class="{ 'md-primary': direction === 'reverse' }"
-      v-on:click="setDirection('reverse')">
-      <md-icon class="md-size-5x">arrow_back</md-icon>
-    </md-button>
-    <md-button 
-      class="md-raised md-icon-button md-raised" 
-      v-bind:class="{ 'md-primary': direction === 'forward' }"
-      v-on:click="setDirection('forward')">
-      <md-icon class="md-size-5x">arrow_forward</md-icon>
-    </md-button>
+    <md-card-content class="wrapper">
+      <md-button 
+        class="md-raised md-icon-button md-raised"
+        v-bind:class="{ 'md-primary': direction === 'reverse' }"
+        v-on:click="setDirection('reverse')">
+        <md-icon class="md-size-5x">arrow_back</md-icon>
+      </md-button>
+      <md-button 
+        class="md-raised md-icon-button md-raised" 
+        v-bind:class="{ 'md-primary': direction === 'forward' }"
+        v-on:click="setDirection('forward')">
+        <md-icon class="md-size-5x">arrow_forward</md-icon>
+      </md-button>
+    </md-card-content>
   </md-card>
 </template>
 <script lang="ts">
@@ -34,10 +36,13 @@ export default class DirectionSetter extends Vue {
 <style scoped>
 .md-card {
   margin: 4px;
-  display: inline-block;
   vertical-align: top;
+  width: 100%;
 }
 
+.wrapper {
+  text-align: center
+}
 
 .md-icon-button {
   height: 150px;
