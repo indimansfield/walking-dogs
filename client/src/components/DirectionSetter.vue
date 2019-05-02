@@ -21,15 +21,15 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class DirectionSetter extends Vue {
-  direction: 'forward' | 'reverse' = 'forward'
+  private direction: 'forward' | 'reverse' = 'forward';
 
-  setDirection(dir: 'forward' | 'reverse') {
-    this.direction = dir
+  private setDirection(dir: 'forward' | 'reverse') {
+    this.direction = dir;
   }
 }
 </script>

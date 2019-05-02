@@ -90,17 +90,17 @@ export default new Vuex.Store({
       sendAction({
         type: 'SET_DURATION',
         value: duration
-      })
+      });
     },
     incrementDuration: () => {
       sendAction({
         type: 'INCREMENT_DURATION'
-      })
+      });
     },
     decrementDuration: () => {
       sendAction({
         type: 'DECREMENT_DURATION'
-      })
+      });
     }
 
   }
@@ -123,5 +123,5 @@ function handle(state: any, message: Message) {
       state.session.waterLevel = value;
       break;
   }
-  console.log(state)
+  console.log(state);
 }

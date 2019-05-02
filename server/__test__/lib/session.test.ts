@@ -19,18 +19,6 @@ describe('Session', () => {
     session = new Session(machine, timer)
   })
 
-  it('should set correct number of rounds', () => {
-    session.setRounds(5)
-    expect(session.totalRounds()).toEqual(5)
-  })
-
-  it('it should start until rounds expired', async () => {
-    session.setRounds(2)
-    expect(session.totalRounds()).toEqual(2)
-    await session.start()
-    await session.start()
-    expect(session.roundsRemaining()).toEqual(0)
-  })
 
   it('should increment duration', () => {
     session.incrementRoundDuration()

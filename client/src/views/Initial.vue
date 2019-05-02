@@ -29,7 +29,8 @@
           Start
         </md-card-header>
         <md-card-content class="start-card-content">
-          <md-button 
+          <md-button
+            v-on:click="startRunning" 
             class="start-button md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">arrow_forward</md-icon>
           </md-button>
@@ -44,7 +45,7 @@ import { mapActions } from 'vuex';
 import SetterCard from '../components/SetterCard.vue';
 import DirectionSetter from '../components/DirectionSetter.vue';
 
-import Component from 'vue-class-component'
+import Component from 'vue-class-component';
 
 @Component({
   components: {
@@ -59,7 +60,6 @@ import Component from 'vue-class-component'
       'decrementWaterLevel'
     ])
   }
-  
 })
 export default class InitialView extends Vue {
   get speed (): number {
@@ -68,11 +68,14 @@ export default class InitialView extends Vue {
   get waterLevel(): number {
     return this.$store.state.session.waterLevel.toString();
   }
-  setSpeed(value: number) {
-    this.$store.dispatch('setSpeed', { speed: value })
+  private setSpeed(value: number) {
+    this.$store.dispatch('setSpeed', { speed: value });
   }
-  setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value })
+  private setWaterLevel(value: number) {
+    this.$store.dispatch('setWaterLevel', { level: value });
+  }
+  private startRunning() {
+    this.$emit('startRunning');
   }
 }
 </script>
@@ -89,7 +92,6 @@ export default class InitialView extends Vue {
   grid-row-gap: 15px;
 }
 .start-button {
-  color: #00e676 !important;
   height: 150px;
   width: 150px;
 }

@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   computed: {
     speed (): number {
-      console.log(this.$store.state.session.speed)
+      console.log(this.$store.state.session.speed);
       return this.$store.state.session.speed;
     }
   },

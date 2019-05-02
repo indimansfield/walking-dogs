@@ -12,7 +12,7 @@ Vue.config.productionTip = false;
 
 
 
-Vue.use(VueMaterial)
+Vue.use(VueMaterial);
 
 
 new Vue({

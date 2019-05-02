@@ -25,29 +25,29 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class SetterCard extends Vue {
-  @Prop() readonly title: string;
-  @Prop() readonly units: string;
-  @Prop() readonly value: string;
+  @Prop() private readonly title: string;
+  @Prop() private readonly units: string;
+  @Prop() private readonly value: string;
 
   get textValue(): string {
-    return this.value
+    return this.value;
   }
 
   set textValue(val: string) {
-    this.$emit('change', val)
+    this.$emit('change', val);
   }
 
-  increment() {
-    this.$emit('increment')
+  private increment() {
+    this.$emit('increment');
   }
 
-  decrement() {
-    this.$emit('decrement')
+  private decrement() {
+    this.$emit('decrement');
   }
 }
 </script>

@@ -2,8 +2,6 @@ import { TreadmillInterface } from "./treadmill";
 import { IMachine } from './machine'
 
 interface ISession {
-  setRounds: (amount: number) => number;
-  roundsRemaining: () => number;
   totalRounds: () => number;
   incrementRoundDuration: () => number;
   decrementRoundDuration: () => number;
@@ -39,7 +37,6 @@ export class Timer implements ITimer {
 
 export class Session implements ISession {
   private rounds = 0
-  private remainingRounds = 0
   private durationInMillis = 0
   private speed = 0
   private waterLevel = 0
@@ -99,16 +96,6 @@ export class Session implements ISession {
   getWaterLevel() {
     return this.waterLevel
   }
-  
-  setRounds = (amount: number) => {
-    this.rounds = amount
-    this.remainingRounds = amount
-    return this.rounds
-  }
-
-  roundsRemaining() {
-    return this.remainingRounds
-  }
 
   totalRounds() {
     return this.rounds
@@ -141,14 +128,13 @@ export class Session implements ISession {
   }
 
   async start() {
-    if (this.remainingRounds == 0) {
-      return false
-    }
+    console.log(`Round ${this.rounds} started`);
     this.machine.setSpeed(this.getSpeed())
     await this.timer.start(this.durationInMillis)
     this.machine.setSpeed(0)
     this.stop
-    this.remainingRounds --
+    console.log(`Round ${this.rounds} ended`);
+    this.rounds ++
     return this.running
   }
 
