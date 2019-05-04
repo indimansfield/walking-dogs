@@ -1,0 +1,19 @@
+
+.md-button.md-theme-default.md-raised:not([disabled]).md-primary.start-button  {
+  color: #fff;
+  color: var(--md-theme-default-text-primary-on-primary, #fff);
+  background-color: #00e676;
+}
+
+.md-button.md-theme-default.md-raised:not([disabled]).md-primary.stop-button  {
+  color: #fff;
+  color: var(--md-theme-default-text-primary-on-primary, #fff);
+  background-color: #ff5252;
+}
+
+.md-button.md-theme-default.md-raised:not([disabled]).md-primary.pause-button  {
+  color: #fff;
+  color: var(--md-theme-default-text-primary-on-primary, #fff);
+  background-color: #448aff;
+}
+

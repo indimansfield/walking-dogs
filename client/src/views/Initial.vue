@@ -120,9 +120,4 @@ export default class InitialView extends Vue {
   text-align: center;
 }
 
-.md-button.md-theme-default.md-raised:not([disabled]).md-primary.start-button  {
-  color: #fff;
-  color: var(--md-theme-default-text-primary-on-primary, #fff);
-  background-color: #00e676;
-}
 </style>

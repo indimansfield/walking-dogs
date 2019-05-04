@@ -4,7 +4,7 @@
       title="Speed"
       :value="speed"
       units="m/min"
-      class="setter-speed"
+      class="running-setter-speed"
       v-on:increment="incrementSpeed"
       v-on:decrement="decrementSpeed"
       v-on:change="setSpeed"/>
@@ -12,29 +12,30 @@
       title="Water Level"
       :value="waterLevel"
       units="mm"
-      class="setter-water-level"
+      class="running-setter-water-level"
       v-on:increment="incrementWaterLevel"
       v-on:decrement="decrementWaterLevel"
       v-on:change="setWaterLevel"/>
     <session-progress-card
+      class="running-progress-card"
       round="1"
       :remainingDuration="remainingDuration"
     ></session-progress-card>
-    <md-card class="start-card">
+    <md-card class="running-start-card">
       <md-card-header class="md-title">
         Running
       </md-card-header>
-      <md-card-content class="start-card-content">
+      <md-card-content class="running-start-card-content">
         <md-button
-          class="start-button md-raised md-icon-button md-primary">
+          class="pause-button md-raised md-icon-button md-primary control-button">
           <md-icon class="md-size-5x">pause</md-icon>
         </md-button>
         <md-button
-          class="start-button md-raised md-icon-button md-primary">
-          <md-icon class="md-size-5x">arrow_forward</md-icon>
+          class="start-button md-raised md-icon-button md-primary control-button">
+          <md-icon class="md-size-5x">play_arrow</md-icon>
         </md-button>
         <md-button
-          class="start-button md-raised md-icon-button md-primary">
+          class="stop-button md-raised md-icon-button md-primary control-button">
           <md-icon class="md-size-5x">stop</md-icon>
         </md-button>
       </md-card-content>
@@ -110,7 +111,30 @@ export default class InitialView extends Vue {
   grid-row-gap: 15px;
 }
 .control-button {
-  height: 150px;
-  width: 150px;
+  height: 200px;
+  width: 200px;
+}
+.running-setter-water-level {
+  grid-row: 1;
+  grid-column: 2;
+}
+.running-setter-speed {
+  grid-row: 1;
+  grid-column: 1;
+}
+.running-start-card {
+  grid-row: 2;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  width: 100%;
+}
+.running-progress-card {
+  grid-row: 1;
+  grid-column: 3;
+  width: 100%;
+}
+.running-start-card-content {
+  display: flex;
+  justify-content: space-around;
 }
 </style>

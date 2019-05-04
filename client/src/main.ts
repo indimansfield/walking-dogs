@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import 'vue-material/dist/theme/default.css';
 import 'vue-material/dist/vue-material.min.css';
+import './styles/styles.css';
 import VueNativeSock from 'vue-native-websocket';
 import App from './App.vue';
 import store from './store';
