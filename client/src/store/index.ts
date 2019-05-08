@@ -16,6 +16,7 @@ export default new Vuex.Store({
       message: '',
     },
     session: {
+      name: '',
       speed: 0,
       waterLevel: 0
     },
@@ -42,6 +43,9 @@ export default new Vuex.Store({
     SOCKET_RECONNECT_ERROR(state) {
       state.socket.reconnectError = true;
     },
+    SET_NAME(state, name: string) {
+      state.session.name = name;
+    }
   },
   actions: {
     incrementSpeed: () => {

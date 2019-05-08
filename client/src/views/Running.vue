@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="running-view">
     <setter-card 
       title="Speed"
       :value="speed"
@@ -35,6 +35,7 @@
           <md-icon class="md-size-5x">play_arrow</md-icon>
         </md-button>
         <md-button
+          @click="$emit('stop')"
           class="stop-button md-raised md-icon-button md-primary control-button">
           <md-icon class="md-size-5x">stop</md-icon>
         </md-button>
@@ -100,8 +101,7 @@ export default class InitialView extends Vue {
 </script>
 
 <style>
-#app {
-  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+.running-view {
   width: 1200px;
   text-align: left;
   margin: 0px auto;

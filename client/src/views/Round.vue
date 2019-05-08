@@ -1,36 +1,41 @@
 <template>
-  <div class="initial-view">
+  <div class="round">
     <setter-card 
-      title="Speed"
-      :value="speed"
-      units="m/min"
-      class="setter-speed"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"
-      v-on:change="setSpeed"/>
-    <setter-card 
-      title="Water Level"
-      :value="waterLevel"
-      units="mm"
-      class="setter-water-level"
-      v-on:increment="incrementWaterLevel"
-      v-on:decrement="decrementWaterLevel"
-      v-on:change="setWaterLevel"/>
-    <setter-card 
-      title="Speed"
-      :value="speed"
-      class="setter-duration"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"/>
+          title="Speed"
+          :value="speed"
+          units="m/min"
+          class="round-setter-speed"
+          v-on:increment="incrementSpeed"
+          v-on:decrement="decrementSpeed"
+          v-on:change="setSpeed"/>
+        <setter-card 
+          title="Water Level"
+          :value="waterLevel"
+          units="mm"
+          class="round-setter-water-level"
+          v-on:increment="incrementWaterLevel"
+          v-on:decrement="decrementWaterLevel"
+          v-on:change="setWaterLevel"/>
+        <setter-card 
+          title="Speed"
+          :value="speed"
+          class="round-setter-duration"
+          v-on:increment="incrementSpeed"
+          v-on:decrement="decrementSpeed"/>
     <direction-setter
       class="direction-setter"></direction-setter>
-    <md-card class="start-card">
+      <md-card class="start-card">
         <md-card-header class="md-title">
           Start
         </md-card-header>
-        <md-card-content class="start-card-content">
+        <md-card-content class="continue-card-content">
           <md-button
-            v-on:click="startRunning" 
+            @click="$emit('end')"
+            class="stop-button circle-button-medium md-raised md-icon-button md-primary">
+            <md-icon class="md-size-5x">stop</md-icon>
+          </md-button>
+          <md-button
+            @click="$emit('continue')"
             class="start-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">arrow_forward</md-icon>
           </md-button>
@@ -38,6 +43,7 @@
     </md-card>
   </div>
 </template>
+
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions } from 'vuex';
@@ -46,7 +52,6 @@ import SetterCard from '../components/SetterCard.vue';
 import DirectionSetter from '../components/DirectionSetter.vue';
 
 import Component from 'vue-class-component';
-// import { Prop } from 'vue-property-decorator';
 
 @Component({
   components: {
@@ -62,29 +67,40 @@ import Component from 'vue-class-component';
     ])
   }
 })
-export default class InitialView extends Vue {
-  // @Prop() public dog: string;
+export default class RoundView extends Vue {
+  private remainingDuration: number = 1500;
+
+  private mounted() {
+    this.remainingDuration = 15000;
+    this.displayTimer();
+  }
+
   get speed (): number {
     return this.$store.state.session.speed.toString();
   }
   get waterLevel(): number {
     return this.$store.state.session.waterLevel.toString();
   }
-
   private setSpeed(value: number) {
     this.$store.dispatch('setSpeed', { speed: value });
   }
   private setWaterLevel(value: number) {
     this.$store.dispatch('setWaterLevel', { level: value });
   }
-  private startRunning() {
-    this.$emit('startRunning');
+
+  private displayTimer() {
+    const interval = setInterval(() => {
+      this.remainingDuration -= 1000;
+      if (this.remainingDuration === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
   }
 }
 </script>
 
 <style>
-.initial-view {
+.round {
   width: 1200px;
   text-align: left;
   margin: 0px auto;
@@ -93,42 +109,24 @@ export default class InitialView extends Vue {
   grid-column-gap: 15px;
   grid-row-gap: 15px;
 }
-.metadata-card {
-  grid-row: 1;
-  grid-column: 1 / 7;
-  width: 100%;
-}
-.metadata-card-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.dog-name-input {
-  width: 30%;
-}
-.setter-speed {
+.round-setter-speed {
   grid-row: 1;
   grid-column: 1 / 3;
 }
-.setter-water-level {
+.round-setter-water-level {
   grid-row: 1;
   grid-column: 3 / 5;
 }
-.setter-duration {
+.round-setter-duration {
   grid-row: 1;
   grid-column: 5 / 7;  
 }
-.direction-setter {
+.round-direction-setter {
   grid-row: 2;
   grid-column: 1 / 4;
 }
-.start-card {
-  width: 100%;
-  grid-row: 2;
-  grid-column: 4 / 7;
+.continue-card-content {
+  display: flex;
+  justify-content: space-around; 
 }
-.start-card-content {
-  text-align: center;
-}
-
 </style>
