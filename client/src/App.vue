@@ -15,8 +15,12 @@
     </running-view>
     <round-view
       v-if="view === 'round'"
-      v-on:continue="setView('running')">
+      v-on:continue="setView('running')"
+      v-on:end="setView('summary')">
     ></round-view>
+    <summary-view
+      v-if="view === 'summary'">
+    </summary-view>
   </div>
 </template>
 <script lang="ts">
@@ -25,6 +29,7 @@ import Vue from 'vue';
 import InitialView from './views/Initial.vue';
 import RunningView from './views/Running.vue';
 import RoundView from './views/Round.vue';
+import SummaryView from './views/Summary.vue';
 import Header from './components/Header.vue';
 
 export default Vue.extend({
@@ -33,6 +38,7 @@ export default Vue.extend({
     InitialView,
     RunningView,
     RoundView,
+    SummaryView,
     'header-view': Header
   },
   data: () => {
