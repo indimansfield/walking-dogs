@@ -108,6 +108,7 @@ export default class RoundView extends Vue {
   justify-items: center;
   grid-column-gap: 15px;
   grid-row-gap: 15px;
+  grid-template-columns: repeat( 6, minmax(180px, 1fr) );
 }
 .round-setter-speed {
   grid-row: 1;

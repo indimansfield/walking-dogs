@@ -92,6 +92,7 @@ export default class InitialView extends Vue {
   justify-items: center;
   grid-column-gap: 15px;
   grid-row-gap: 15px;
+  grid-template-columns: repeat( 6, minmax(180px, 1fr) );
 }
 .metadata-card {
   grid-row: 1;

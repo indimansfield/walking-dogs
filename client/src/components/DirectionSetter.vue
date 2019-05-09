@@ -35,7 +35,6 @@ export default class DirectionSetter extends Vue {
 </script>
 <style scoped>
 .md-card {
-  margin: 4px;
   vertical-align: top;
   width: 100%;
 }

@@ -109,6 +109,7 @@ export default class InitialView extends Vue {
   justify-items: center;
   grid-column-gap: 15px;
   grid-row-gap: 15px;
+  grid-template-columns: repeat( 3, minmax(360px, 1fr) );
 }
 .control-button {
   height: 200px;
