@@ -68,12 +68,13 @@ import Component from 'vue-class-component';
   }
 })
 export default class RoundView extends Vue {
-  private remainingDuration: number = 1500;
+  private remainingDuration: number = 0;
 
   private mounted() {
-    this.remainingDuration = 15000;
+    this.$store.dispatch('getStatus');
     this.displayTimer();
   }
+
 
   get speed (): number {
     return this.$store.state.session.speed.toString();

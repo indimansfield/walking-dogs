@@ -1,5 +1,5 @@
 import WebSocket from 'ws'
-import { Session } from './lib/session'
+import { Session, RoundSummary } from './lib/session'
 
 interface Message {
   type: string,
@@ -12,14 +12,29 @@ export class Socket {
   private session: Session
   constructor(session: Session) {
     this.session = session
-
   }
 
   public listen = () => {
     this.wss.on('connection',  (ws) => {
       console.log('connected')
-      ws.on('message', (message: any) => {
+      ws.send(JSON.stringify(this.handle({ type: 'STATUS', value: '' })))
+      this.session.on('ROUND_FINISHED', (summary: RoundSummary) => {
+        console.log('ROUND_FINISHED')
+        ws.send(
+          JSON.stringify({
+            type: 'ROUND_FINISHED',
+            value: summary
+          }))
+      })
+      this.session.on('ROUND_STOPPED', (summary: RoundSummary) => {
+        ws.send(
+          JSON.stringify({
+            type: 'ROUND_STOPPED',
+            value: summary
+          }))
+      })
 
+      ws.on('message', (message: any) => {
         ws.send(
           JSON.stringify(this.handle(JSON.parse(message)))
         )
@@ -33,7 +48,6 @@ export class Socket {
 
     switch (message.type) {
       case('INCREMENT_SPEED'):
-        console.log('brus look out')
         const speed = this.session.incrementSpeed()
         return {
           type: 'SET_SPEED',
@@ -70,6 +84,7 @@ export class Socket {
           value: this.session.getWaterLevel()
         }
       case('SET_DURATION'):
+        console.log(message.value)
         this.session.setRoundDuration(Number(message.value))
         return {
           type: 'SET_DURATION',
@@ -93,12 +108,19 @@ export class Socket {
           type: 'SET_DIRECTION',
           value: this.session.getDirection()
         }
+      case('STATUS'):
+        return {
+          type: 'STATUS',
+          value: this.session.status()
+        }
       case('START'):
         this.session.start()
         return {
           type: 'START',
           value: ''
         }
+      case('STOP'):
+        this.session.stop()
 
     }
     return {

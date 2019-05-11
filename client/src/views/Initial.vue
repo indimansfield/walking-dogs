@@ -17,11 +17,12 @@
       v-on:decrement="decrementWaterLevel"
       v-on:change="setWaterLevel"/>
     <setter-card 
-      title="Speed"
-      :value="speed"
+      title="Duration"
+      :value="duration"
       class="setter-duration"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"/>
+      v-on:increment="incrementDuration"
+      v-on:decrement="decrementDuration"
+      v-on:change="setDuration"/>
     <direction-setter
       class="direction-setter"></direction-setter>
     <md-card class="start-card">
@@ -58,17 +59,27 @@ import Component from 'vue-class-component';
       'incrementSpeed',
       'decrementSpeed',
       'incrementWaterLevel',
-      'decrementWaterLevel'
+      'decrementWaterLevel',
+      'incrementDuration',
+      'decrementDuration'
     ])
   }
 })
 export default class InitialView extends Vue {
-  // @Prop() public dog: string;
-  get speed (): number {
-    return this.$store.state.session.speed.toString();
+  private mounted() {
+    this.$store.dispatch('getStatus');
   }
+
+  get speed (): number {
+    return this.$store.state.session.speed;
+  }
+
   get waterLevel(): number {
-    return this.$store.state.session.waterLevel.toString();
+    return this.$store.state.session.waterLevel;
+  }
+
+  get duration(): number {
+    return (this.$store.state.session.duration / 1000);
   }
 
   private setSpeed(value: number) {
@@ -76,6 +87,9 @@ export default class InitialView extends Vue {
   }
   private setWaterLevel(value: number) {
     this.$store.dispatch('setWaterLevel', { level: value });
+  }
+  private setDuration(value: number) {
+    this.$store.dispatch('setRoundDuration', { duration: value });
   }
   private startRunning() {
     this.$emit('startRunning');

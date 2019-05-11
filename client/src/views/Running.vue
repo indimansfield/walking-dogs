@@ -72,8 +72,9 @@ export default class InitialView extends Vue {
   private remainingDuration: number = 1500;
 
   private mounted() {
-    this.remainingDuration = 15000;
+    this.remainingDuration = this.$store.state.session.duration;
     this.displayTimer();
+    this.$store.dispatch('startRound');
   }
 
   get speed (): number {

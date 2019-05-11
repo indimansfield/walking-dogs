@@ -30,19 +30,11 @@ import Vue from 'vue';
 import { mapActions } from 'vuex';
 
 import Component from 'vue-class-component';
-
-interface Round {
-  round: number;
-  speed: number;
-  duration: number;
-  distance: number;
-  waterDepth: number;
-  restTime: number;
-}
+import { CompletedRound } from '../store';
 
 @Component({})
 export default class Summary extends Vue {
-  get summary(): Round[] {
+  get summary(): CompletedRound[] {
     const r = []
     for (let i = 0; i < 6; i ++) {
       r.push({

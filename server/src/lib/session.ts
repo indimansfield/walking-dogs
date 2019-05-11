@@ -1,5 +1,6 @@
 import { TreadmillInterface } from "./treadmill";
 import { IMachine } from './machine'
+import { EventEmitter } from "events";
 
 interface ISession {
   totalRounds: () => number;
@@ -8,7 +9,7 @@ interface ISession {
   setRoundDuration: (duration: number) => number;
   getRoundDuration: () => number;
   start: () => Promise<boolean>;
-  stop: () => boolean;
+  stop: () => number;
   incrementSpeed: () => number;
   decrementSpeed: () => number;
   setSpeed: (speed: number) => number;
@@ -21,37 +22,72 @@ interface ISession {
   getDirection: () => string;
 }
 
-export interface ITimer {
-  start: (duration: number) => Promise<boolean>
+export interface RoundSummary {
+  round: number;
+  speed: number;
+  duration: number;
+  distance: number;
+  waterDepth: number;
+  restTime: number;
 }
 
-export class Timer implements ITimer {
+export interface ITimer {
+  start: (duration: number) => Promise<boolean>
+  stop: () => number;
+}
+
+export class Timer extends EventEmitter implements ITimer {
+  private interval: any;
+  private remaining: number = 0;
   start(duration: number) {
+    this.remaining = duration;
     return new Promise<boolean>(resolve => {
-      setTimeout(() => {
-        resolve(true)
-      }, duration)
-    })
+      this.interval = setInterval(() => {
+        this.remaining -= 1000;
+        console.log(this.remaining)
+        if (this.remaining === 0) {
+          clearInterval(this.interval);
+          console.log(this.remaining)
+          resolve(true)
+          this.emit('FINISHED')
+        }
+      }, 1000)
+    });
+  }
+
+  stop() {
+    if (this.interval) {
+      clearInterval(this.interval)
+      this.emit('STOPPED')
+    }
+    return this.remaining;
   }
 }
 
-export class Session implements ISession {
+export class Session extends EventEmitter implements ISession {
   private rounds = 0
-  private durationInMillis = 0
+  private durationInMillis = 30000
   private speed = 0
   private waterLevel = 0
   private running = false
-  private timer: ITimer
+  private timer: Timer
   private direction = 'forward'
 
   private readonly TIMER_INCREMENTS = 10000
 
   private machine: IMachine
 
-  constructor(machine: IMachine, timer: ITimer) {
+
+  constructor(machine: IMachine, timer: Timer) {
+    super()
     this.machine = machine
     this.timer = timer
+    this.timer.on('FINISHED', () => {
+      this.finish()
+    })
   }
+
+  
 
   incrementSpeed() {
     this.speed ++
@@ -129,19 +165,42 @@ export class Session implements ISession {
 
   async start() {
     console.log(`Round ${this.rounds} started`);
-    this.machine.setSpeed(this.getSpeed())
+    this.machine.setSpeed(this.getSpeed());
     await this.timer.start(this.durationInMillis)
+    return true
+  }
+
+  
+  onStop() {
     this.machine.setSpeed(0)
-    this.stop
     console.log(`Round ${this.rounds} ended`);
-    this.rounds ++
-    return this.running
+    this.rounds ++     
   }
 
   stop() {
     this.machine.setSpeed(0)
-    this.stop
-    return this.running
+    this.timer.stop()
+    this.emit('ROUND_STOPPED', {
+      rounds: this.rounds,
+      speed: this.speed,
+      duration: this.durationInMillis,
+      distance: 0,
+      waterDepth: this.waterLevel,
+      restTime: this.durationInMillis
+    })
+    return this.timer.stop()
+  }
+
+  finish() {
+    this.machine.setSpeed(0)
+    this.emit('ROUND_FINISHED', {
+      rounds: this.rounds,
+      speed: this.speed,
+      duration: this.durationInMillis,
+      distance: 0,
+      waterDepth: this.waterLevel,
+      restTime: this.durationInMillis
+    })
   }
 
   setDirection(direction: 'forward' | 'reverse') {
@@ -151,5 +210,14 @@ export class Session implements ISession {
 
   getDirection() {
     return this.direction
+  }
+
+  status() {
+    return {
+      duration: this.durationInMillis,
+      speed: this.speed,
+      waterLevel: this.waterLevel,
+      direction: this.direction
+    }
   }
 }

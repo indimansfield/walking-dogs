@@ -8,8 +8,31 @@ interface Message {
   value?: any;
 }
 
-export default new Vuex.Store({
-  state: {
+export interface CompletedRound {
+  round: number;
+  speed: number;
+  duration: number;
+  distance: number;
+  waterDepth: number;
+  restTime: number;
+}
+
+interface State {
+  socket: {
+    isConnected: boolean;
+    reconnectError: boolean;
+    message: string;
+  };
+  session: {
+    name: string;
+    speed: number;
+    waterLevel: number;
+    duration: number;
+  };
+  completedRounds: CompletedRound[];
+}
+
+const initialState: State = {
     socket: {
       isConnected: false,
       reconnectError: false,
@@ -18,9 +41,14 @@ export default new Vuex.Store({
     session: {
       name: '',
       speed: 0,
-      waterLevel: 0
+      waterLevel: 0,
+      duration: 30000
     },
-  },
+    completedRounds: []
+};
+
+export default new Vuex.Store({
+  state: initialState,
   mutations: {
     SOCKET_ONOPEN (state, event)  {
       Vue.prototype.$socket = event.currentTarget;
@@ -60,8 +88,11 @@ export default new Vuex.Store({
         type: 'DECREMENT_SPEED',
       });
     },
-    setSpeed: ({ commit }, { speed }) => {
+    setSpeed: ({ commit, state }, { speed }) => {
       if (speed === null || speed === undefined) {
+        return;
+      }
+      if (speed === state.session.speed) {
         return;
       }
       sendAction({
@@ -81,8 +112,11 @@ export default new Vuex.Store({
         type: 'DECREMENT_WATER_LEVEL',
       });
     },
-    setWaterLevel: ({ commit }, { level }) => {
+    setWaterLevel: ({ commit, state }, { level }) => {
       if (level === null || level === undefined) {
+        return;
+      }
+      if (level === state.session.waterLevel) {
         return;
       }
       sendAction({
@@ -90,10 +124,14 @@ export default new Vuex.Store({
         value: level
       });
     },
-    setRoundDuration: ({ commit }, { duration }) => {
+    setRoundDuration: ({ commit, state }, { duration }) => {
+      const asMillis = duration * 1000;
+      if (asMillis === state.session.duration) {
+        return;
+      }
       sendAction({
         type: 'SET_DURATION',
-        value: duration
+        value: asMillis
       });
     },
     incrementDuration: () => {
@@ -104,6 +142,24 @@ export default new Vuex.Store({
     decrementDuration: () => {
       sendAction({
         type: 'DECREMENT_DURATION'
+      });
+    },
+    getStatus: ({commit, state}) => {
+      if (state.socket.isConnected) {
+        sendAction({
+          type: 'STATUS'
+        });
+      }
+    },
+    stopRound: ({}) => {
+      sendAction({
+        type: 'STOP'
+      });
+    },
+    startRound: () => {
+      console.log('starting')
+      sendAction({
+        type: 'START'
       });
     }
 
@@ -126,6 +182,23 @@ function handle(state: any, message: Message) {
     case 'SET_WATER_LEVEL':
       state.session.waterLevel = value;
       break;
+    case 'SET_DURATION':
+      state.session.duration = value;
+      break;
+    case 'STATUS':
+      const {
+        waterLevel,
+        speed,
+        duration,
+        directiom
+      } = value;
+      state.session.waterLevel = waterLevel;
+      state.session.speed = speed;
+      state.session.duration = duration;
+      state.session.directiom = directiom;
+      break;
+    case 'ROUND_FINISHED':
+      console.log(value);
   }
   console.log(state);
 }
