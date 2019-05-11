@@ -1,4 +1,4 @@
-import { ITimer } from "../../src/lib/session";
+import { ITimer } from "../../src/lib/timer";
 import { IMachine } from "../../src/lib/machine"
 
 export class MockMachine implements IMachine {
@@ -42,6 +42,9 @@ export class MockTimer implements ITimer {
     return new Promise<boolean>(resolve => {
       resolve(true)
     })
+  }
+  stop() {
+
   }
 
 }

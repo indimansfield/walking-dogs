@@ -18,6 +18,7 @@ export interface CompletedRound {
 }
 
 interface State {
+  view: 'initial' | 'running'| 'round' | 'summary';
   socket: {
     isConnected: boolean;
     reconnectError: boolean;
@@ -33,18 +34,19 @@ interface State {
 }
 
 const initialState: State = {
-    socket: {
-      isConnected: false,
-      reconnectError: false,
-      message: '',
-    },
-    session: {
-      name: '',
-      speed: 0,
-      waterLevel: 0,
-      duration: 30000
-    },
-    completedRounds: []
+  view: 'initial',
+  socket: {
+    isConnected: false,
+    reconnectError: false,
+    message: '',
+  },
+  session: {
+    name: '',
+    speed: 0,
+    waterLevel: 0,
+    duration: 30000
+  },
+  completedRounds: []
 };
 
 export default new Vuex.Store({
@@ -73,6 +75,9 @@ export default new Vuex.Store({
     },
     SET_NAME(state, name: string) {
       state.session.name = name;
+    },
+    SET_VIEW(state, view: 'initial' | 'running'| 'round' | 'summary') {
+      state.view = view;
     }
   },
   actions: {
@@ -199,6 +204,7 @@ function handle(state: any, message: Message) {
       break;
     case 'ROUND_FINISHED':
       console.log(value);
+      state.view = 'round';
   }
   console.log(state);
 }

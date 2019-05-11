@@ -1,5 +1,6 @@
 import { TreadmillInterface } from "./treadmill";
 import { IMachine } from './machine'
+import { Timer } from './timer'
 import { EventEmitter } from "events";
 
 interface ISession {
@@ -31,38 +32,6 @@ export interface RoundSummary {
   restTime: number;
 }
 
-export interface ITimer {
-  start: (duration: number) => Promise<boolean>
-  stop: () => number;
-}
-
-export class Timer extends EventEmitter implements ITimer {
-  private interval: any;
-  private remaining: number = 0;
-  start(duration: number) {
-    this.remaining = duration;
-    return new Promise<boolean>(resolve => {
-      this.interval = setInterval(() => {
-        this.remaining -= 1000;
-        console.log(this.remaining)
-        if (this.remaining === 0) {
-          clearInterval(this.interval);
-          console.log(this.remaining)
-          resolve(true)
-          this.emit('FINISHED')
-        }
-      }, 1000)
-    });
-  }
-
-  stop() {
-    if (this.interval) {
-      clearInterval(this.interval)
-      this.emit('STOPPED')
-    }
-    return this.remaining;
-  }
-}
 
 export class Session extends EventEmitter implements ISession {
   private rounds = 0
@@ -166,11 +135,11 @@ export class Session extends EventEmitter implements ISession {
   async start() {
     console.log(`Round ${this.rounds} started`);
     this.machine.setSpeed(this.getSpeed());
-    await this.timer.start(this.durationInMillis)
+    this.timer.start(this.durationInMillis)
     return true
   }
 
-  
+
   onStop() {
     this.machine.setSpeed(0)
     console.log(`Round ${this.rounds} ended`);

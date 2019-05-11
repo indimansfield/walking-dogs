@@ -25,14 +25,17 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 
+
+import Component from 'vue-class-component';
 import InitialView from './views/Initial.vue';
 import RunningView from './views/Running.vue';
 import RoundView from './views/Round.vue';
 import SummaryView from './views/Summary.vue';
 import Header from './components/Header.vue';
 
-export default Vue.extend({
+@Component({
   name: 'app',
   components: {
     InitialView,
@@ -40,22 +43,22 @@ export default Vue.extend({
     RoundView,
     SummaryView,
     'header-view': Header
-  },
-  data: () => {
-    return {
-      view: 'initial',
-      dog: ''
-    };
-  },
-  methods: {
-    onStart() {
-      this.view = 'running';
-    },
-    setView(view: 'initial' | 'running'| 'round' | 'summary') {
-      this.view = view;
-    }
   }
-});
+})
+export default class App extends Vue {
+  private dog = '';
+  get view() {
+    return this.$store.state.view;
+  }
+
+  private onStart() {
+    this.$store.commit('SET_VIEW', 'running');
+  }
+
+  private setView(view: 'initial' | 'running'| 'round' | 'summary') {
+    this.$store.commit('SET_VIEW', view);
+  }
+}
 </script>
 
 <style>
