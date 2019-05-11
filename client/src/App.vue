@@ -11,7 +11,7 @@
     </initial-view>
     <running-view
       v-if="view === 'running'"
-      v-on:stop="setView('round')">
+      v-on:stop="onStop()">
     </running-view>
     <round-view
       v-if="view === 'round'"
@@ -57,6 +57,10 @@ export default class App extends Vue {
 
   private setView(view: 'initial' | 'running'| 'round' | 'summary') {
     this.$store.commit('SET_VIEW', view);
+  }
+
+  private onStop() {
+    this.$store.dispatch('stopRound');
   }
 }
 </script>

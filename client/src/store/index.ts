@@ -205,6 +205,10 @@ function handle(state: any, message: Message) {
     case 'ROUND_FINISHED':
       console.log(value);
       state.view = 'round';
+      break;
+    case 'ROUND_STOPPED':
+      state.view = 'round';
+      break;
   }
   console.log(state);
 }
