@@ -35,18 +35,7 @@ import { CompletedRound } from '../store';
 @Component({})
 export default class Summary extends Vue {
   get summary(): CompletedRound[] {
-    const r = []
-    for (let i = 0; i < 6; i ++) {
-      r.push({
-        round: i,
-        speed: Math.random() * 6,
-        duration: Math.random() * 22,
-        distance: Math.random() * 7,
-        waterDepth: Math.random() * 16,
-        restTime: Math.random() * 2
-      });
-    }
-    return r;
+    return this.$store.state.completedRounds;
   }
 }
 

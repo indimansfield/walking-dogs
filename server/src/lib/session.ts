@@ -41,6 +41,7 @@ export class Session extends EventEmitter implements ISession {
   private running = false
   private timer: Timer
   private direction = 'forward'
+  private lastEndTime: number = Date.now()
 
   private readonly TIMER_INCREMENTS = 10000
 
@@ -148,12 +149,13 @@ export class Session extends EventEmitter implements ISession {
 
   stop() {
     this.machine.setSpeed(0)
-    this.timer.stop()
+    const remaining = this.timer.stop()
+    const timeRun = this.durationInMillis - remaining;
     this.emit('ROUND_STOPPED', {
       rounds: this.rounds,
       speed: this.speed,
       duration: this.durationInMillis,
-      distance: 0,
+      distance: this.distanceTravelled(timeRun / 1000),
       waterDepth: this.waterLevel,
       restTime: this.durationInMillis
     })
@@ -166,7 +168,7 @@ export class Session extends EventEmitter implements ISession {
       rounds: this.rounds,
       speed: this.speed,
       duration: this.durationInMillis,
-      distance: 0,
+      distance: this.distanceTravelled(this.durationInMillis / 1000),
       waterDepth: this.waterLevel,
       restTime: this.durationInMillis
     })
@@ -188,5 +190,9 @@ export class Session extends EventEmitter implements ISession {
       waterLevel: this.waterLevel,
       direction: this.direction
     }
+  }
+
+  private distanceTravelled(seconds: number) {
+    return this.speed * seconds;
   }
 }

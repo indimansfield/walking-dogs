@@ -162,7 +162,7 @@ export default new Vuex.Store({
       });
     },
     startRound: () => {
-      console.log('starting')
+      console.log('starting');
       sendAction({
         type: 'START'
       });
@@ -205,9 +205,12 @@ function handle(state: any, message: Message) {
     case 'ROUND_FINISHED':
       console.log(value);
       state.view = 'round';
+      state.completedRounds.push(value);
       break;
     case 'ROUND_STOPPED':
+      console.log(value);
       state.view = 'round';
+      state.completedRounds.push(value);
       break;
   }
   console.log(state);

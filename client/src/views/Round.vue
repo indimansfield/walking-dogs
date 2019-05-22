@@ -3,7 +3,7 @@
     <setter-card 
           title="Speed"
           :value="speed"
-          units="m/min"
+          units="m/sec"
           class="round-setter-speed"
           v-on:increment="incrementSpeed"
           v-on:decrement="decrementSpeed"
