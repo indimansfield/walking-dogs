@@ -5,23 +5,24 @@
           :value="speed"
           units="m/sec"
           class="round-setter-speed"
-          v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"
-          v-on:change="setSpeed"/>
+          @increment="incrementSpeed"
+          @decrement="decrementSpeed"
+          @change="setSpeed"/>
         <setter-card 
           title="Water Level"
           :value="waterLevel"
           units="mm"
           class="round-setter-water-level"
-          v-on:increment="incrementWaterLevel"
-          v-on:decrement="decrementWaterLevel"
-          v-on:change="setWaterLevel"/>
+          @increment="incrementWaterLevel"
+          @decrement="decrementWaterLevel"
+          @change="setWaterLevel"/>
         <setter-card 
-          title="Speed"
-          :value="speed"
+          title="Duration"
+          :value="duration"
           class="round-setter-duration"
-          v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"/>
+          @increment="incrementDuration"
+          @decrement="decrementDuration"
+          @change="setDuration"/>
     <direction-setter
       class="direction-setter"></direction-setter>
       <md-card class="start-card">
@@ -63,7 +64,9 @@ import Component from 'vue-class-component';
       'incrementSpeed',
       'decrementSpeed',
       'incrementWaterLevel',
-      'decrementWaterLevel'
+      'decrementWaterLevel',
+      'incrementDuration',
+      'decrementDuration'
     ])
   }
 })
@@ -77,16 +80,27 @@ export default class RoundView extends Vue {
 
 
   get speed (): number {
-    return this.$store.state.session.speed.toString();
+    return this.$store.state.session.speed;
   }
+
   get waterLevel(): number {
-    return this.$store.state.session.waterLevel.toString();
+    return this.$store.state.session.waterLevel;
   }
+
+  get duration(): number {
+    return (this.$store.state.session.duration / 1000);
+  }
+
   private setSpeed(value: number) {
     this.$store.dispatch('setSpeed', { speed: value });
   }
+
   private setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value });
+    this.$store.dispatch('setWaterLevel', { waterLevel: value });
+  }
+
+  private setDuration(value: number) {
+    this.$store.dispatch('setRoundDuration', { duration: value });
   }
 
   private displayTimer() {

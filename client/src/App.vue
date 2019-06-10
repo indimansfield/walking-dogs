@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <set-dialog></set-dialog>
     <h1> Hydrotreadmill Co Canine2100</h1>
     <header-view
       class="header-card"
@@ -34,6 +35,7 @@ import RunningView from './views/Running.vue';
 import RoundView from './views/Round.vue';
 import SummaryView from './views/Summary.vue';
 import Header from './components/Header.vue';
+import SetDialog from './components/SetDialog.vue';
 
 @Component({
   name: 'app',
@@ -42,13 +44,18 @@ import Header from './components/Header.vue';
     RunningView,
     RoundView,
     SummaryView,
-    'header-view': Header
+    'header-view': Header,
+    SetDialog
   }
 })
 export default class App extends Vue {
   private dog = '';
   get view() {
     return this.$store.state.view;
+  }
+
+  get showDialog() {
+    return this.$store.state.setDialog.show;
   }
 
   private onStart() {

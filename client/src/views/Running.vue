@@ -5,17 +5,17 @@
       :value="speed"
       units="m/sec"
       class="running-setter-speed"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"
-      v-on:change="setSpeed"/>
+      @increment="incrementSpeed"
+      @decrement="decrementSpeed"
+      @change="setSpeed"/>
     <setter-card 
       title="Water Level"
       :value="waterLevel"
       units="mm"
       class="running-setter-water-level"
-      v-on:increment="incrementWaterLevel"
-      v-on:decrement="decrementWaterLevel"
-      v-on:change="setWaterLevel"/>
+      @increment="incrementWaterLevel"
+      @decrement="decrementWaterLevel"
+      @change="setWaterLevel"/>
     <session-progress-card
       class="running-progress-card"
       round="1"
@@ -78,16 +78,18 @@ export default class InitialView extends Vue {
   }
 
   get speed (): number {
-    return this.$store.state.session.speed.toString();
+    return this.$store.state.session.speed;
   }
+
   get waterLevel(): number {
-    return this.$store.state.session.waterLevel.toString();
+    return this.$store.state.session.waterLevel;
   }
+
   private setSpeed(value: number) {
     this.$store.dispatch('setSpeed', { speed: value });
   }
   private setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value });
+    this.$store.dispatch('setWaterLevel', { waterLevel: value });
   }
 
   private displayTimer() {

@@ -2,27 +2,30 @@
   <div class="initial-view">
     <setter-card 
       title="Speed"
+      type="speed"
       :value="speed"
       units="m/sec"
       class="setter-speed"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"
-      v-on:change="setSpeed"/>
+      @increment="incrementSpeed"
+      @decrement="decrementSpeed"
+      @change="setSpeed"/>
     <setter-card 
       title="Water Level"
+      type="waterLevel"
       :value="waterLevel"
       units="mm"
       class="setter-water-level"
-      v-on:increment="incrementWaterLevel"
-      v-on:decrement="decrementWaterLevel"
-      v-on:change="setWaterLevel"/>
+      @increment="incrementWaterLevel"
+      @decrement="decrementWaterLevel"
+      @change="setWaterLevel"/>
     <setter-card 
       title="Duration"
+      type="duration"
       :value="duration"
       class="setter-duration"
-      v-on:increment="incrementDuration"
-      v-on:decrement="decrementDuration"
-      v-on:change="setDuration"/>
+      @increment="incrementDuration"
+      @decrement="decrementDuration"
+      @change="setDuration"/>
     <direction-setter
       class="direction-setter"></direction-setter>
     <md-card class="start-card">
@@ -31,7 +34,7 @@
         </md-card-header>
         <md-card-content class="start-card-content">
           <md-button
-            v-on:click="startRunning" 
+            @click="startRunning" 
             class="start-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">arrow_forward</md-icon>
           </md-button>
@@ -86,7 +89,7 @@ export default class InitialView extends Vue {
     this.$store.dispatch('setSpeed', { speed: value });
   }
   private setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value });
+    this.$store.dispatch('setWaterLevel', { waterLevel: value });
   }
   private setDuration(value: number) {
     this.$store.dispatch('setRoundDuration', { duration: value });

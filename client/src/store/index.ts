@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Session from '@/helpers/session';
+
+const session = new Session();
 
 Vue.use(Vuex);
 
-interface Message {
-  type: string;
-  value?: any;
-}
+const TIMER_INCREMENTS = 10000;
 
 export interface CompletedRound {
   round: number;
@@ -19,6 +19,10 @@ export interface CompletedRound {
 
 interface State {
   view: 'initial' | 'running'| 'round' | 'summary';
+  setDialog: {
+    show: boolean;
+    toSet: 'speed' | 'duration' | 'waterLevel' | ''
+  };
   socket: {
     isConnected: boolean;
     reconnectError: boolean;
@@ -29,6 +33,7 @@ interface State {
     speed: number;
     waterLevel: number;
     duration: number;
+    direction: 'forward' | 'reverse';
   };
   completedRounds: CompletedRound[];
 }
@@ -40,11 +45,16 @@ const initialState: State = {
     reconnectError: false,
     message: '',
   },
+  setDialog: {
+    show: false,
+    toSet: ''
+  },
   session: {
     name: '',
     speed: 0,
     waterLevel: 0,
-    duration: 30000
+    duration: 30000,
+    direction: 'forward'
   },
   completedRounds: []
 };
@@ -62,10 +72,9 @@ export default new Vuex.Store({
     SOCKET_ONERROR (state, event)  {
       console.error(state, event);
     },
-    SOCKET_ONMESSAGE (state, message: MessageEvent)  {
+    SOCKET_ONMESSAGE (state, message: string)  {
       console.log(message);
-      const data: Message = JSON.parse(message.data);
-      handle(state, data);
+      handle(state, message);
     },
     SOCKET_RECONNECT(state, count) {
       console.info(state, count);
@@ -78,44 +87,89 @@ export default new Vuex.Store({
     },
     SET_VIEW(state, view: 'initial' | 'running'| 'round' | 'summary') {
       state.view = view;
+    },
+    INCREMENT_SPEED(state) {
+      state.session.speed ++;
+    },
+    DECREMENT_SPEED(state) {
+      const { speed } = state.session;
+      if (speed > 0) {
+        state.session.speed --;
+      }
+    },
+    SET_SPEED(state, { speed }) {
+      state.session.speed = speed;
+    },
+    INCREMENT_WATER_LEVEL(state) {
+      state.session.waterLevel ++;
+    },
+    DECREMENT_WATER_LEVEL(state) {
+      const { waterLevel } = state.session;
+      if (waterLevel > 0) {
+        state.session.waterLevel --;
+      }
+    },
+    SET_WATER_LEVEL(state, { level }) {
+      state.session.waterLevel = level;
+    },
+    INCREMENT_DURATION(state) {
+      state.session.duration += TIMER_INCREMENTS;
+    },
+    DECREMENT_DURATION(state) {
+      const { duration } = state.session;
+      if (duration > 0) {
+        state.session.duration -= TIMER_INCREMENTS;
+      }
+    },
+    SET_DURATION(state, { duration }) {
+      state.session.duration = duration;
+    },
+    SET_DIRECTION(state, { direction }) {
+      state.session.direction = direction;
+    },
+    ADD_COMPLETED_ROUND(state, { round }) {
+      state.completedRounds.push(round);
+    },
+    SHOW_SET_DIALOG(state) {
+      state.setDialog.show = true;
+    },
+    HIDE_SET_DIALOG(state) {
+      state.setDialog.show = false;
+    },
+    SET_DIALOG_TYPE(state, { type }) {
+      state.setDialog.toSet = type;
     }
   },
   actions: {
-    incrementSpeed: () => {
+    incrementSpeed: ({ commit }) => {
       console.log('Called increment');
-      sendAction({
-        type: 'INCREMENT_SPEED',
-      });
+      sendAction('INCREMENT_SPEED');
+      commit('INCREMENT_SPEED');
     },
-    decrementSpeed: () => {
+    decrementSpeed: ({ commit }) => {
       console.log('Called decrement');
-      sendAction({
-        type: 'DECREMENT_SPEED',
-      });
+      sendAction('DECREMENT_SPEED');
+      commit('DECREMENT_SPEED');
+
     },
     setSpeed: ({ commit, state }, { speed }) => {
-      if (speed === null || speed === undefined) {
+      if (!speed) {
         return;
       }
       if (speed === state.session.speed) {
         return;
       }
-      sendAction({
-        type: 'SET_SPEED',
-        value: speed
-      });
+      sendAction('SET_SPEED');
+      commit('SET_SPEED', { speed });
     },
-    incrementWaterLevel: () => {
-      console.log('Called increment');
-      sendAction({
-        type: 'INCREMENT_WATER_LEVEL',
-      });
+    incrementWaterLevel: ({ commit }) => {
+      sendAction('INCREMENT_WATER_LEVEL');
+      commit('INCREMENT_WATER_LEVEL');
     },
-    decrementWaterLevel: () => {
-      console.log('Called decrement');
-      sendAction({
-        type: 'DECREMENT_WATER_LEVEL',
-      });
+    decrementWaterLevel: ({ commit }) => {
+      sendAction('DECREMENT_WATER_LEVEL');
+      commit('DECREMENT_WATER_LEVEL');
+
     },
     setWaterLevel: ({ commit, state }, { level }) => {
       if (level === null || level === undefined) {
@@ -124,94 +178,67 @@ export default new Vuex.Store({
       if (level === state.session.waterLevel) {
         return;
       }
-      sendAction({
-        type: 'SET_WATER_LEVEL',
-        value: level
-      });
+      sendAction('SET_WATER_LEVEL');
+      commit('SET_WATER_LEVEL', { level });
     },
     setRoundDuration: ({ commit, state }, { duration }) => {
       const asMillis = duration * 1000;
       if (asMillis === state.session.duration) {
         return;
       }
-      sendAction({
-        type: 'SET_DURATION',
-        value: asMillis
-      });
+      sendAction('SET_DURATION');
+      commit('SET_DURATION', { duration: asMillis });
     },
-    incrementDuration: () => {
-      sendAction({
-        type: 'INCREMENT_DURATION'
-      });
+    incrementDuration: ({ commit }) => {
+      sendAction('INCREMENT_DURATION');
+      commit('INCREMENT_DURATION');
     },
-    decrementDuration: () => {
-      sendAction({
-        type: 'DECREMENT_DURATION'
-      });
+    decrementDuration: ({ commit }) => {
+      sendAction('DECREMENT_DURATION');
+      commit('DECREMENT_DURATION');
     },
     getStatus: ({commit, state}) => {
       if (state.socket.isConnected) {
-        sendAction({
-          type: 'STATUS'
-        });
+        sendAction('STATUS');
       }
     },
     stopRound: ({}) => {
-      sendAction({
-        type: 'STOP'
-      });
+      sendAction('STOP');
+      session.stop();
     },
-    startRound: () => {
+    startRound: async ({ commit, state }) => {
       console.log('starting');
-      sendAction({
-        type: 'START'
+      sendAction('START');
+      const distance = await session.start(state.session.duration, state.session.speed);
+      const {
+        speed,
+        duration,
+        waterLevel,
+      } = state.session;
+      commit('ADD_COMPLETED_ROUND', { round: {
+        rounds: 0,
+        speed,
+        duration,
+        distance,
+        waterDepth: waterLevel,
+        restTime: duration
+      }
       });
+      commit('SET_VIEW', 'round');
+    },
+    showSetDialog({ commit }, { type }) {
+      commit('SHOW_SET_DIALOG');
+      commit('SET_DIALOG_TYPE', { type });
     }
-
   }
 });
 
-function sendAction(message: Message) {
-  Vue.prototype.$socket.send(JSON.stringify(message));
+function sendAction(message: string) {
+  Vue.prototype.$socket.send(message);
 }
 
 
 // All mutations from socket connection handled here
-function handle(state: any, message: Message) {
-  const { type, value } = message;
-  console.log(type, value);
-  switch (type) {
-    case 'SET_SPEED':
-      state.session.speed = value;
-      break;
-    case 'SET_WATER_LEVEL':
-      state.session.waterLevel = value;
-      break;
-    case 'SET_DURATION':
-      state.session.duration = value;
-      break;
-    case 'STATUS':
-      const {
-        waterLevel,
-        speed,
-        duration,
-        directiom
-      } = value;
-      state.session.waterLevel = waterLevel;
-      state.session.speed = speed;
-      state.session.duration = duration;
-      state.session.directiom = directiom;
-      break;
-    case 'ROUND_FINISHED':
-      console.log(value);
-      state.view = 'round';
-      state.completedRounds.push(value);
-      break;
-    case 'ROUND_STOPPED':
-      console.log(value);
-      state.view = 'round';
-      state.completedRounds.push(value);
-      break;
-  }
-  console.log(state);
+function handle(state: any, message: string) {
+  console.log(message);
 }
