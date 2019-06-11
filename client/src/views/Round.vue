@@ -3,6 +3,7 @@
     <setter-card 
           title="Speed"
           :value="speed"
+          type="speed"
           units="m/sec"
           class="round-setter-speed"
           @increment="incrementSpeed"
@@ -11,6 +12,7 @@
         <setter-card 
           title="Water Level"
           :value="waterLevel"
+          type="waterLevel"
           units="mm"
           class="round-setter-water-level"
           @increment="incrementWaterLevel"
@@ -18,6 +20,7 @@
           @change="setWaterLevel"/>
         <setter-card 
           title="Duration"
+          type="duration"
           :value="duration"
           class="round-setter-duration"
           @increment="incrementDuration"

@@ -1,17 +1,23 @@
 <template>
   <md-dialog :md-active.sync="show">
     <md-dialog-title>Set {{ type }} </md-dialog-title>
+    <div class="set-dialog-body">
       <md-field>
         <label>{{ title }} </label>
-      <md-input v-model="value"></md-input>
+        <md-input
+          v-model="value"
+          v-on:keyup.enter="set"></md-input>
+      </md-field>
+    </div>
+    <md-dialog-actions>
       <md-button @click="set" class="md-primary">Set</md-button>
-    </md-field>
+    </md-dialog-actions>  
   </md-dialog>
 </template>
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Prop } from 'vue-property-decorator';
+import { Prop, Watch } from 'vue-property-decorator';
 
 @Component({})
 export default class SetDialog extends Vue {
@@ -32,8 +38,23 @@ export default class SetDialog extends Vue {
     this.$store.commit('HIDE_SET_DIALOG');
   }
 
-  set() {
-    switch(this.type) {
+  @Watch('show')
+  private setValue() {
+
+    switch (this.type) {
+      case 'speed':
+        this.value = this.$store.state.session.speed;
+        break;
+      case 'duration':
+        this.value = this.$store.state.session.duration  / 1000;
+        break;
+      case 'waterLevel':
+       this.value = this.$store.state.session.waterLevel;
+    }
+  }
+
+  private set() {
+    switch (this.type) {
       case 'speed':
         this.$store.dispatch('setSpeed', { speed: this.value });
         break;
@@ -43,10 +64,13 @@ export default class SetDialog extends Vue {
       case 'waterLevel':
         this.$store.dispatch('setWaterLevel', { level: this.value });
     }
+    this.$store.commit('HIDE_SET_DIALOG');
   }
 }
 </script>
 
 <style>
-
+.set-dialog-body {
+  margin: 10px;
+}
 </style>
