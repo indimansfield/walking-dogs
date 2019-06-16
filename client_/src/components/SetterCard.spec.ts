@@ -1,19 +1,7 @@
-import { mount, createLocalVue } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { mount } from '@vue/test-utils';
 import SetterCard from './SetterCard.vue';
 
-const localVue = createLocalVue();
-
-localVue.use(Vuex);
-
 describe('SetterCard', () => {
-  let actions;
-  let store;
-  beforeEach(() => {
-    actions = {
-      
-    }
-  });
   it('should have correct props', () => {
     const wrapper = mount(SetterCard, {
       propsData: {
