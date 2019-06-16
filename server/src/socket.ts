@@ -35,9 +35,15 @@ export class Socket {
       })
 
       ws.on('message', (message: any) => {
-        ws.send(
-          JSON.stringify(this.handle(JSON.parse(message)))
-        )
+        try {
+          ws.send(
+            JSON.stringify(this.handle(JSON.parse(message)))
+          )
+        } catch(e) {
+          console.log(message)
+          console.error(e);
+        }
+        
       });
     });
   }
