@@ -20,7 +20,7 @@ import { Prop } from 'vue-property-decorator';
 @Component({})
 export default class Header extends Vue {
     get date(): string {
-    return '8/09/2019';
+    return new Date().toJSON().slice(0,10).replace(/-/g, '/');
   }
 
   get dogName(): string {
