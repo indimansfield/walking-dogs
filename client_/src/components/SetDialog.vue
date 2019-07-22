@@ -21,8 +21,8 @@ import { Prop, Watch } from 'vue-property-decorator';
 
 @Component({})
 export default class SetDialog extends Vue {
-  @Prop() private title: string;
-  @Prop() private initialValue: number;
+  @Prop() private title!: string;
+  @Prop() private initialValue!: number;
 
   private value: number = 0;
 

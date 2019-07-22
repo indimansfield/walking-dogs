@@ -35,14 +35,14 @@ import SetDialog from './SetDialog.vue';
 
 @Component({
   components: {
-    SetDialog
+    SetDialog,
   }
 })
 export default class SetterCard extends Vue {
-  @Prop() private readonly title: string;
-  @Prop() private readonly units: string;
-  @Prop() private readonly value: string;
-  @Prop() private readonly type: string;
+  @Prop() private readonly title!: string;
+  @Prop() private readonly units!: string;
+  @Prop() private readonly value!: string;
+  @Prop() private readonly type!: string;
 
   get textValue(): string {
     return this.value;

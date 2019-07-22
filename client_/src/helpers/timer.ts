@@ -5,14 +5,14 @@ export interface ITimer {
   stop: () => number;
 }
 
-export class Timer extends EventEmitter implements ITimer {
-  private interval: any;
+export class CountDownTimer extends EventEmitter implements ITimer {
+  private interval: number;
   private remaining: number = 0;
   public start(duration: number) {
     this.remaining = duration;
     this.interval = setInterval(() => {
       this.remaining -= 1000;
-      console.log(this.remaining / 1000);
+      this.emit('TICK', this.remaining);
       if (this.remaining === 0) {
         clearInterval(this.interval);
         this.emit('FINISHED');

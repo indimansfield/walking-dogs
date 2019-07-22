@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import SetterCard from '../components/SetterCard.vue';
 import DirectionSetter from '../components/DirectionSetter.vue';
@@ -59,32 +59,34 @@ import Component from 'vue-class-component';
 @Component({
   components: {
     SetterCard,
-    SessionProgressCard
+    SessionProgressCard,
   },
   methods: {
     ...mapActions([
       'incrementSpeed',
       'decrementSpeed',
       'incrementWaterLevel',
-      'decrementWaterLevel'
-    ])
-  }
+      'decrementWaterLevel',
+    ]),
+  },
 })
-export default class InitialView extends Vue {
-  private remainingDuration: number = 1500;
+export default class RunningView extends Vue {
 
-  private mounted() {
-    this.remainingDuration = this.$store.state.session.duration;
-    this.displayTimer();
-    this.$store.dispatch('startRound');
+
+  get remainingDuration() {
+    return this.$store.getters.remainingDuration;
   }
 
-  get speed (): number {
-    return this.$store.state.session.speed;
+  get speed() {
+    return this.$store.getters.speed;
   }
 
-  get waterLevel(): number {
-    return this.$store.state.session.waterLevel;
+  get duration() {
+    return this.$store.getters.duration;
+  }
+
+  get waterLevel() {
+    return this.$store.getters.waterLevel;
   }
 
   private setSpeed(value: number) {
@@ -92,15 +94,6 @@ export default class InitialView extends Vue {
   }
   private setWaterLevel(value: number) {
     this.$store.dispatch('setWaterLevel', { waterLevel: value });
-  }
-
-  private displayTimer() {
-    const interval = setInterval(() => {
-      this.remainingDuration -= 1000;
-      if (this.remainingDuration === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
   }
 }
 </script>

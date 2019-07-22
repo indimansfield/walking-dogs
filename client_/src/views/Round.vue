@@ -34,12 +34,12 @@
         </md-card-header>
         <md-card-content class="continue-card-content">
           <md-button
-            @click="$emit('end')"
+            @click="onEnd()"
             class="stop-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">stop</md-icon>
           </md-button>
           <md-button
-            @click="$emit('continue')"
+            @click="onContinue"
             class="start-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">arrow_forward</md-icon>
           </md-button>
@@ -60,7 +60,7 @@ import Component from 'vue-class-component';
 @Component({
   components: {
     SetterCard,
-    DirectionSetter
+    DirectionSetter,
   },
   methods: {
     ...mapActions([
@@ -69,20 +69,18 @@ import Component from 'vue-class-component';
       'incrementWaterLevel',
       'decrementWaterLevel',
       'incrementDuration',
-      'decrementDuration'
-    ])
-  }
+      'decrementDuration',
+    ]),
+  },
 })
 export default class RoundView extends Vue {
-  private remainingDuration: number = 0;
+  private restDuration = 0;
 
   private mounted() {
     this.$store.dispatch('getStatus');
-    this.displayTimer();
   }
 
-
-  get speed (): number {
+  get speed(): number {
     return this.$store.state.session.speed;
   }
 
@@ -106,13 +104,12 @@ export default class RoundView extends Vue {
     this.$store.dispatch('setRoundDuration', { duration: value });
   }
 
-  private displayTimer() {
-    const interval = setInterval(() => {
-      this.remainingDuration -= 1000;
-      if (this.remainingDuration === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
+  private onContinue() {
+    this.$emit('continue', this.restDuration);
+  }
+
+  private onEnd() {
+    this.$emit('end');
   }
 }
 </script>

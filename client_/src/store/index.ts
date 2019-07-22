@@ -1,8 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Session from '@/helpers/session';
-
-const session = new Session();
 
 Vue.use(Vuex);
 
@@ -11,10 +8,10 @@ const TIMER_INCREMENTS = 10000;
 export interface CompletedRound {
   round: number;
   speed: number;
-  duration: number;
+  elapsedDuration: number;
   distance: number;
-  waterDepth: number;
-  restTime: number;
+  waterLevel: number;
+  restDuration: number;
 }
 
 interface State {
@@ -33,6 +30,8 @@ interface State {
     speed: number;
     waterLevel: number;
     duration: number;
+    restDuration: number;
+    remainingDuration: number;
     direction: 'forward' | 'reverse';
   };
   completedRounds: CompletedRound[];
@@ -47,41 +46,43 @@ const initialState: State = {
   },
   setDialog: {
     show: false,
-    toSet: ''
+    toSet: '',
   },
   session: {
     name: '',
     speed: 0,
     waterLevel: 0,
     duration: 30000,
-    direction: 'forward'
+    restDuration: 0,
+    direction: 'forward',
+    remainingDuration: 30000,
   },
-  completedRounds: []
+  completedRounds: [],
 };
 
 export default new Vuex.Store({
   state: initialState,
   mutations: {
-    SOCKET_ONOPEN (state, event)  {
-      Vue.prototype.$socket = event.currentTarget;
-      state.socket.isConnected = true;
-    },
-    SOCKET_ONCLOSE (state, event)  {
-      state.socket.isConnected = false;
-    },
-    SOCKET_ONERROR (state, event)  {
-      console.error(state, event);
-    },
-    SOCKET_ONMESSAGE (state, message: string)  {
-      console.log(message);
-      handle(state, message);
-    },
-    SOCKET_RECONNECT(state, count) {
-      console.info(state, count);
-    },
-    SOCKET_RECONNECT_ERROR(state) {
-      state.socket.reconnectError = true;
-    },
+    // SOCKET_ONOPEN (state, event)  {
+    //   Vue.prototype.$socket = event.currentTarget;
+    //   state.socket.isConnected = true;
+    // },
+    // SOCKET_ONCLOSE (state, event)  {
+    //   state.socket.isConnected = false;
+    // },
+    // SOCKET_ONERROR (state, event)  {
+    //   console.error(state, event);
+    // },
+    // SOCKET_ONMESSAGE (state, message: string)  {
+    //   console.log(message);
+    //   handle(state, message);
+    // },
+    // SOCKET_RECONNECT(state, count) {
+    //   console.info(state, count);
+    // },
+    // SOCKET_RECONNECT_ERROR(state) {
+    //   state.socket.reconnectError = true;
+    // },
     SET_NAME(state, name: string) {
       state.session.name = name;
     },
@@ -114,21 +115,32 @@ export default new Vuex.Store({
     },
     INCREMENT_DURATION(state) {
       state.session.duration += TIMER_INCREMENTS;
+      state.session.remainingDuration = state.session.duration;
     },
     DECREMENT_DURATION(state) {
       const { duration } = state.session;
       if (duration > 0) {
         state.session.duration -= TIMER_INCREMENTS;
+        state.session.remainingDuration = state.session.duration;
       }
     },
     SET_DURATION(state, { duration }) {
       state.session.duration = duration;
+      state.session.remainingDuration = state.session.duration;
     },
     SET_DIRECTION(state, { direction }) {
       state.session.direction = direction;
     },
-    ADD_COMPLETED_ROUND(state, { round }) {
-      state.completedRounds.push(round);
+    ADD_COMPLETED_ROUND(state) {
+      const { speed, duration, remainingDuration } = state.session;
+      const elapsedDuration = duration - remainingDuration;
+      const distance = speed * (elapsedDuration / 1000);
+      state.completedRounds.push({
+        ...state.session,
+        round: state.completedRounds.length,
+        distance,
+        elapsedDuration,
+      });
     },
     SHOW_SET_DIALOG(state) {
       state.setDialog.show = true;
@@ -138,16 +150,20 @@ export default new Vuex.Store({
     },
     SET_DIALOG_TYPE(state, { type }) {
       state.setDialog.toSet = type;
-    }
+    },
+    SET_REST_DURATION(state, { restDuration }) {
+      state.session.restDuration = restDuration;
+    },
+    SET_REMAINING_DURATION(state, { remaining }) {
+      state.session.remainingDuration = remaining;
+    },
   },
   actions: {
     incrementSpeed: ({ commit }) => {
-      console.log('Called increment');
       sendAction('INCREMENT_SPEED');
       commit('INCREMENT_SPEED');
     },
     decrementSpeed: ({ commit }) => {
-      console.log('Called decrement');
       sendAction('DECREMENT_SPEED');
       commit('DECREMENT_SPEED');
 
@@ -197,48 +213,54 @@ export default new Vuex.Store({
       sendAction('DECREMENT_DURATION');
       commit('DECREMENT_DURATION');
     },
-    getStatus: ({commit, state}) => {
+    getStatus: ({ commit, state }) => {
       if (state.socket.isConnected) {
         sendAction('STATUS');
       }
     },
-    stopRound: ({}) => {
+    setRestDuration: ({ commit }, { restDuration }) => {
+      commit('SET_REST_DURATION', { restDuration });
+    },
+    stopRound: ({ commit, state }) => {
       sendAction('STOP');
-      session.stop();
+    },
+    setRemainingDuration: ({ commit }, { remaining }) => {
+      commit('SET_REMAINING_DURATION', { remaining });
     },
     startRound: async ({ commit, state }) => {
-      console.log('starting');
+      commit('SET_REMAINING_DURATION', { remaining: state.session.duration });
       sendAction('START');
-      const distance = await session.start(state.session.duration, state.session.speed);
-      const {
-        speed,
-        duration,
-        waterLevel,
-      } = state.session;
-      commit('ADD_COMPLETED_ROUND', { round: {
-        rounds: 0,
-        speed,
-        duration,
-        distance,
-        waterDepth: waterLevel,
-        restTime: duration
-      }
-      });
-      commit('SET_VIEW', 'round');
+    },
+    saveRoundInformation: ({ commit }) => {
+      commit('ADD_COMPLETED_ROUND');
     },
     showSetDialog({ commit }, { type }) {
       commit('SHOW_SET_DIALOG');
       commit('SET_DIALOG_TYPE', { type });
-    }
-  }
+    },
+  },
+  getters: {
+    duration: (state: State) => {
+      return state.session.duration;
+    },
+    remainingDuration: (state: State) => {
+      return state.session.remainingDuration;
+    },
+    speed: (state: State) => {
+      return state.session.speed;
+    },
+    waterLevel: (state: State) => {
+      return state.session.waterLevel;
+    },
+  },
 });
 
 function sendAction(message: string) {
-  Vue.prototype.$socket.send(message);
+  // Vue.prototype.$socket.send(message);
 }
 
 
 // All mutations from socket connection handled here
 function handle(state: any, message: string) {
-  console.log(message);
+  // console.log(message);
 }

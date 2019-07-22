@@ -20,14 +20,15 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
+import { toReadableTime } from '@/helpers';
 
 @Component({})
 export default class SessionProgressCard extends Vue {
-  @Prop() private round: number;
-  @Prop() private remainingDuration: number;
+  @Prop() private round!: number;
+  @Prop() private remainingDuration!: number;
 
   get displayedRemainingDuration() {
-    return new Date(this.remainingDuration).toISOString().substr(11, 8);
+    return toReadableTime(this.remainingDuration);
   }
 }
 </script>

@@ -55,7 +55,7 @@ import Component from 'vue-class-component';
 @Component({
   components: {
     SetterCard,
-    DirectionSetter
+    DirectionSetter,
   },
   methods: {
     ...mapActions([
@@ -64,16 +64,16 @@ import Component from 'vue-class-component';
       'incrementWaterLevel',
       'decrementWaterLevel',
       'incrementDuration',
-      'decrementDuration'
-    ])
-  }
+      'decrementDuration',
+    ]),
+  },
 })
 export default class InitialView extends Vue {
   private mounted() {
     this.$store.dispatch('getStatus');
   }
 
-  get speed (): number {
+  get speed(): number {
     return this.$store.state.session.speed;
   }
 
