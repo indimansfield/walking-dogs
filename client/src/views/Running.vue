@@ -3,19 +3,21 @@
     <setter-card 
       title="Speed"
       :value="speed"
+      type="speed"
       units="m/sec"
       class="running-setter-speed"
-      v-on:increment="incrementSpeed"
-      v-on:decrement="decrementSpeed"
-      v-on:change="setSpeed"/>
+      @increment="incrementSpeed"
+      @decrement="decrementSpeed"
+      @change="setSpeed"/>
     <setter-card 
       title="Water Level"
+      type="waterLevel"
       :value="waterLevel"
       units="mm"
       class="running-setter-water-level"
-      v-on:increment="incrementWaterLevel"
-      v-on:decrement="decrementWaterLevel"
-      v-on:change="setWaterLevel"/>
+      @increment="incrementWaterLevel"
+      @decrement="decrementWaterLevel"
+      @change="setWaterLevel"/>
     <session-progress-card
       class="running-progress-card"
       round="1"
@@ -46,7 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import SetterCard from '../components/SetterCard.vue';
 import DirectionSetter from '../components/DirectionSetter.vue';
@@ -57,46 +59,41 @@ import Component from 'vue-class-component';
 @Component({
   components: {
     SetterCard,
-    SessionProgressCard
+    SessionProgressCard,
   },
   methods: {
     ...mapActions([
       'incrementSpeed',
       'decrementSpeed',
       'incrementWaterLevel',
-      'decrementWaterLevel'
-    ])
-  }
+      'decrementWaterLevel',
+    ]),
+  },
 })
-export default class InitialView extends Vue {
-  private remainingDuration: number = 1500;
+export default class RunningView extends Vue {
 
-  private mounted() {
-    this.remainingDuration = this.$store.state.session.duration;
-    this.displayTimer();
-    this.$store.dispatch('startRound');
+
+  get remainingDuration() {
+    return this.$store.getters.remainingDuration;
   }
 
-  get speed (): number {
-    return this.$store.state.session.speed.toString();
+  get speed() {
+    return this.$store.getters.speed;
   }
-  get waterLevel(): number {
-    return this.$store.state.session.waterLevel.toString();
+
+  get duration() {
+    return this.$store.getters.duration;
   }
+
+  get waterLevel() {
+    return this.$store.getters.waterLevel;
+  }
+
   private setSpeed(value: number) {
     this.$store.dispatch('setSpeed', { speed: value });
   }
   private setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value });
-  }
-
-  private displayTimer() {
-    const interval = setInterval(() => {
-      this.remainingDuration -= 1000;
-      if (this.remainingDuration === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
+    this.$store.dispatch('setWaterLevel', { waterLevel: value });
   }
 }
 </script>

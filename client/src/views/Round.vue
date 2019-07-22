@@ -3,25 +3,29 @@
     <setter-card 
           title="Speed"
           :value="speed"
+          type="speed"
           units="m/sec"
           class="round-setter-speed"
-          v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"
-          v-on:change="setSpeed"/>
+          @increment="incrementSpeed"
+          @decrement="decrementSpeed"
+          @change="setSpeed"/>
         <setter-card 
           title="Water Level"
           :value="waterLevel"
+          type="waterLevel"
           units="mm"
           class="round-setter-water-level"
-          v-on:increment="incrementWaterLevel"
-          v-on:decrement="decrementWaterLevel"
-          v-on:change="setWaterLevel"/>
+          @increment="incrementWaterLevel"
+          @decrement="decrementWaterLevel"
+          @change="setWaterLevel"/>
         <setter-card 
-          title="Speed"
-          :value="speed"
+          title="Duration"
+          type="duration"
+          :value="duration"
           class="round-setter-duration"
-          v-on:increment="incrementSpeed"
-          v-on:decrement="decrementSpeed"/>
+          @increment="incrementDuration"
+          @decrement="decrementDuration"
+          @change="setDuration"/>
     <direction-setter
       class="direction-setter"></direction-setter>
       <md-card class="start-card">
@@ -30,12 +34,12 @@
         </md-card-header>
         <md-card-content class="continue-card-content">
           <md-button
-            @click="$emit('end')"
+            @click="onEnd()"
             class="stop-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">stop</md-icon>
           </md-button>
           <md-button
-            @click="$emit('continue')"
+            @click="onContinue"
             class="start-button circle-button-medium md-raised md-icon-button md-primary">
             <md-icon class="md-size-5x">arrow_forward</md-icon>
           </md-button>
@@ -56,46 +60,56 @@ import Component from 'vue-class-component';
 @Component({
   components: {
     SetterCard,
-    DirectionSetter
+    DirectionSetter,
   },
   methods: {
     ...mapActions([
       'incrementSpeed',
       'decrementSpeed',
       'incrementWaterLevel',
-      'decrementWaterLevel'
-    ])
-  }
+      'decrementWaterLevel',
+      'incrementDuration',
+      'decrementDuration',
+    ]),
+  },
 })
 export default class RoundView extends Vue {
-  private remainingDuration: number = 0;
+  private restDuration = 0;
 
   private mounted() {
     this.$store.dispatch('getStatus');
-    this.displayTimer();
   }
 
-
-  get speed (): number {
-    return this.$store.state.session.speed.toString();
+  get speed(): number {
+    return this.$store.state.session.speed;
   }
+
   get waterLevel(): number {
-    return this.$store.state.session.waterLevel.toString();
+    return this.$store.state.session.waterLevel;
   }
+
+  get duration(): number {
+    return (this.$store.state.session.duration / 1000);
+  }
+
   private setSpeed(value: number) {
     this.$store.dispatch('setSpeed', { speed: value });
   }
+
   private setWaterLevel(value: number) {
-    this.$store.dispatch('setWaterLevel', { level: value });
+    this.$store.dispatch('setWaterLevel', { waterLevel: value });
   }
 
-  private displayTimer() {
-    const interval = setInterval(() => {
-      this.remainingDuration -= 1000;
-      if (this.remainingDuration === 0) {
-        clearInterval(interval);
-      }
-    }, 1000);
+  private setDuration(value: number) {
+    this.$store.dispatch('setRoundDuration', { duration: value });
+  }
+
+  private onContinue() {
+    this.$emit('continue', this.restDuration);
+  }
+
+  private onEnd() {
+    this.$emit('end');
   }
 }
 </script>
